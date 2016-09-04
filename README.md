@@ -20,7 +20,7 @@ Collection::macro('present', function ($class) {
 });
 ```
 
-### Usage
+## Usage
 
 Use the `present` helper:
 
