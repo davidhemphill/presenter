@@ -22,14 +22,14 @@ Collection::macro('present', function ($class) {
 
 ### Usage
 
-1. Use the `present` helper
+Use the `present` helper
 
 ```php
 $user = User::first();
 $presentedUser = present($user, ApiPresenter::class);
 ```
 
-2. Use the `present` macro on the Collection class
+Use the `present` macro on the Collection class
 
 ```php
 $presentedUsers = User::all()->present(ApiPresenter::class);
