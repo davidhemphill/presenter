@@ -4,13 +4,25 @@ namespace Hemp;
 
 class Presenter
 {
+    /**
+     * The decorated model
+     * @var Illuminate/Database/Eloquent/Model
+     */
     protected $model;
 
+    /**
+     * Create a new instance of the Presenter
+     * @param Illuminate/Database/Eloquent/Model $model
+     */
     public function __construct($model)
     {
         $this->model = $model;
     }
 
+    /**
+     * Get the decorated model
+     * @return Illuminate/Database/Eloquent/Model
+     */
     public function getModel()
     {
         return $this->model;
