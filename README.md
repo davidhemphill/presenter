@@ -4,11 +4,13 @@ This package makes it fast, fun, and profitable to decorate your Eloquent models
 
 ## Installation
 
-1. Install the package via composer:
+Install the package via composer:
 
-`composer require hemp/presenter`
+```
+composer require hemp/presenter`
+```
 
-2. Add this macro in a Service Provider somewhere in your project
+Add this macro in a Service Provider somewhere in your project
 
 ```php
 Collection::macro('present', function ($class) {
@@ -21,6 +23,7 @@ Collection::macro('present', function ($class) {
 ### Usage
 
 1. Use the `present` helper
+
 ```php
 $user = User::first();
 $presentedUser = present($user, ApiPresenter::class);
