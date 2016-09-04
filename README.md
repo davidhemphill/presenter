@@ -7,7 +7,7 @@ This package makes it fast, fun, and profitable to decorate your Eloquent models
 Install the package via composer:
 
 ```
-composer require hemp/presenter`
+composer require hemp/presenter
 ```
 
 Add this macro in a Service Provider somewhere in your project:
