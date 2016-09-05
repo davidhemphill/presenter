@@ -1,6 +1,6 @@
 <?php
 
-namespace Hemp;
+namespace Hemp\Presenter;
 
 use Illuminate\Support\Str;
 use Illuminate\Contracts\Support\Jsonable;

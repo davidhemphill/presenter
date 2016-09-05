@@ -1,6 +1,7 @@
 <?php
 
-use Hemp\Presenter;
+use Hemp\Presenter\Presenter;
+use Hemp\Presenter\Presentable;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Capsule\Manager;
@@ -117,6 +118,14 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('David Lee Hemphill', $presenter->full_name);
     }
 
+   /** @test */
+   function you_can_call_present_on_an_eloquent_model_using_the_trait()
+   {
+       $presentedModel = $this->createModel()->present(SamplePresenter::class);
+
+       $this->assertInstanceOf(Presenter::class, $presentedModel);
+   }
+
     /** @test */
     function you_can_wrap_a_collection_of_eloquent_models()
     {
@@ -214,6 +223,8 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
 class TestModel extends Model
 {
+    use Presentable;
+
     protected $guarded = [];
 
     public function overloadedMethod()
