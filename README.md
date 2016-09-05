@@ -49,10 +49,6 @@ Use the `present` helper:
 ```php
 $user = User::first();
 $presentedUser = present($user, ApiPresenter::class);
-// You can use magic getters like this:
-$presentedUser->full_name;
-// Or use regular old methods:
-$presentedUser->createdAt();
 ```
 
 Or use the `Presentable` trait on your model and call `present` on it:
@@ -65,6 +61,18 @@ Use the `present` macro on a Collection object:
 
 ```php
 $presentedUsers = User::all()->present(ApiPresenter::class);
+```
+
+Once you have a presented model instance, you can use magic getters like this:
+
+```php
+$presentedUser->full_name;
+```
+
+Or use regular old methods:
+
+```php
+$presentedUser->createdAt();
 ```
 
 ## Other
