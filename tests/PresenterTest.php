@@ -126,6 +126,14 @@ class PresenterTest extends PHPUnit_Framework_TestCase
        $this->assertInstanceOf(Presenter::class, $presentedModel);
    }
 
+   /** @test */
+   function you_can_use_a_helper_function_to_decorate_a_model()
+   {
+       $presentedModel = present($this->createModel(), SamplePresenter::class);
+
+       $this->assertInstanceOf(Presenter::class, $presentedModel);
+   }
+
     /** @test */
     function you_can_wrap_a_collection_of_eloquent_models()
     {
