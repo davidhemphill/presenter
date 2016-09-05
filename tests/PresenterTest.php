@@ -130,6 +130,86 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('David Hemphill', $firstUser->name());
         $this->assertEquals('David Lee Hemphill', $firstUser->full_name);
     }
+
+    /** @test */
+    function it_can_be_converted_to_json_and_arrays()
+    {
+        $now = '2016-10-14 12:00:00';
+        $later = '2016-12-14 12:00:00';
+
+        $model = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => $now,
+            'updated_at' => $later,
+        ]);
+
+        $desiredArray = [
+            'full_name' => 'David Lee Hemphill',
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => $now,
+            'updated_at' => $later,
+            'id' => 1,
+        ];
+
+        $mutatorArray = [
+            'full_name' => 'David Lee Hemphill',
+        ];
+
+        $desired = json_encode($desiredArray);
+
+        $decorated = new SamplePresenter($model);
+
+        $this->assertEquals($desired, $decorated->toJson());
+        $this->assertEquals($desiredArray, $decorated->toArray());
+        $this->assertEquals($mutatorArray, $decorated->mutatorsToArray());
+        $this->assertEquals(['fullName'], $decorated->getMutatedAttributes());
+    }
+
+    /** @test */
+    function a_collection_of_decorated_eloquent_models_will_still_return_json()
+    {
+        $now = '2015-10-14 12:00:00';
+        $later = '2019-12-14 10:30:00';
+
+        $sampleModel = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $sampleModel2 = TestModel::create([
+            'first_name' => 'Tess',
+            'last_name' => 'Rowlett',
+            'created_at' => $later,
+            'updated_at' => $later,
+        ]);
+
+        $users = TestModel::all()->present(SamplePresenter::class);
+
+        $desired = json_encode([
+            [
+                'full_name' => 'David Lee Hemphill',
+                'id' => 1,
+                'first_name' => 'David',
+                'last_name' => 'Hemphill',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'full_name' => 'Tess Lee Rowlett',
+                'id' => 2,
+                'first_name' => 'Tess',
+                'last_name' => 'Rowlett',
+                'created_at' => $later,
+                'updated_at' => $later,
+            ]
+        ]);
+
+        $this->assertEquals($desired, $users->toJson());
+    }
 }
 
 class TestModel extends Model
