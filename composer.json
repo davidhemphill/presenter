@@ -5,7 +5,8 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "illuminate/support": "5.3.*"
+        "illuminate/support": "5.3.*",
+        "illuminate/database": "^5.3"
     },
     "require-dev": {
         "mockery/mockery": "^1.0@dev",
