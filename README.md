@@ -80,4 +80,24 @@ Presented models can be converted to JSON and array format just like the Eloquen
 
 ```php
 $presentedUsersJson = User::all()->present(ApiPresenter::class)->toJson();
+
+/*
+// Outputs something like this
+[{
+    "id":1,
+    "full_name":"David Lee Hemphill",
+    "first_name":"David",
+    "last_name":"Hemphill",
+    "created_at":"2016-10-14 12:00:00",
+    "updated_at":"2016-12-14 12:00:00"
+},
+{
+    "id":1,
+    "full_name":"Tess Rowlett",
+    "first_name":"Tess",
+    "last_name":"Rowlett",
+    "created_at":"2016-10-14 12:00:00",
+    "updated_at":"2016-12-14 12:00:00"
+}]
+*/
 ```
