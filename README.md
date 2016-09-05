@@ -2,6 +2,11 @@
 
 This package makes it fast, fun, and profitable to decorate your Eloquent models for presentation in views, responses, pdfs, csv files, or anywhere you want.
 
+### Key differences with other presenter packages
+- Supports multiple decorators/presenters
+- Decorated models can be converted to JSON/array still
+- Supports mutators/magic getters like the ones used in Eloquent (e.g. getFullNameAttribute())
+
 ## Installation
 
 Install the package via composer:
@@ -76,10 +81,35 @@ $presentedUser->createdAt();
 ```
 
 ## Other
-Presented models can be converted to JSON and array format just like the Eloquent models they wrap.
+
+Individual instances can be returned as JSON just like you can with plain Eloquent models, except the mutators you specify on your `Presenter` will also be added to the output.
 
 ```php
-$presentedUsersJson = User::all()->present(ApiPresenter::class)->toJson();
+public function show($id)
+{
+    return User::findOrFail($id)->present(ApiPresenter::class);
+}
+
+/*
+// Outputs something like this
+{
+    "id":1,
+    "full_name":"David Lee Hemphill",
+    "first_name":"David",
+    "last_name":"Hemphill",
+    "created_at":"2016-10-14 12:00:00",
+    "updated_at":"2016-12-14 12:00:00"
+}
+*/
+```
+
+A collection of presented models can be converted to JSON and array format just like normal.
+
+```php
+public function index()
+{
+    return User::all()->present(ApiPresenter::class);    
+}
 
 /*
 // Outputs something like this
