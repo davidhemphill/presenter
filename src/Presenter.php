@@ -50,10 +50,6 @@ class Presenter implements Jsonable, Arrayable
                 return $this->{$method}($name);
             }
 
-            if (method_exists($this->model, $name)) {
-                $this->model->{$name}(func_get_args());
-            }
-
             return $this->model->{$name};
         } catch (Exception $e) {
             throw new Exception("Property [{$name}] could not be resolved.");
