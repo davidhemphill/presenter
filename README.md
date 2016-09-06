@@ -3,6 +3,7 @@
 This package makes it fast, fun, and profitable to decorate your Eloquent models for presentation in views, responses, pdfs, csv files, or anywhere you want.
 
 ### Key differences with other presenter packages
+
 - Supports multiple decorators/presenters
 - Decorated models can still be converted to JSON/array with `toJson` and `toArray` or by simply returning it from a controller
 - Supports mutators/magic getters like the ones used in Eloquent (e.g. getFullNameAttribute())
@@ -23,6 +24,12 @@ Collection::macro('present', function ($class) {
         return present($object, $class);
     });
 });
+```
+
+Or add the Service Provider to the `providers` array in `config/app.php`;
+
+```
+Hemp\\Presenter\PresenterServiceProvider
 ```
 
 ## Create a `Presenter`

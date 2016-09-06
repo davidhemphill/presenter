@@ -1,6 +1,9 @@
 <?php
 
+namespace Hemp\Tests\Presentable;
+
 use Hemp\Presenter\Presenter;
+use PHPUnit_Framework_TestCase;
 use Hemp\Presenter\Presentable;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
