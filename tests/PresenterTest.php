@@ -185,6 +185,36 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    function you_can_present_a_collection_multiple_times()
+    {
+        $now = '2015-10-14 12:00:00';
+        $later = '2019-12-14 10:30:00';
+
+        $sampleModel = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $sampleModel2 = TestModel::create([
+            'first_name' => 'Tess',
+            'last_name' => 'Rowlett',
+            'created_at' => $later,
+            'updated_at' => $later,
+        ]);
+
+        $users = TestModel::all()
+            ->present(SamplePresenter::class)
+            ->present(OtherSamplePresenter::class);
+
+        $this->assertEquals(2015, $users->first()->published_year);
+        $this->assertEquals(2015, $users->first()->publishedYear());
+
+        $this->assertInstanceOf(OtherSamplePresenter::class, $users->first());
+    }
+
+    /** @test */
     function a_collection_of_decorated_eloquent_models_will_still_return_json()
     {
         $now = '2015-10-14 12:00:00';
@@ -261,5 +291,18 @@ class SamplePresenter extends Presenter
     public function getFullNameAttribute()
     {
         return $this->model->first_name . ' Lee ' . $this->model->last_name;
+    }
+}
+
+class OtherSamplePresenter extends Presenter
+{
+    public function publishedYear()
+    {
+        return $this->model->created_at->format('Y');
+    }
+
+    public function getPublishedYearAttribute()
+    {
+        return $this->model->created_at->format('Y');
     }
 }
