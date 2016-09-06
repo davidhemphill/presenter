@@ -52,7 +52,7 @@ class Presenter implements Jsonable, Arrayable
 
             return $this->model->{$name};
         } catch (Exception $e) {
-            throw new Exception("Property [{$name}] could not be resolved.");
+            throw new Exception("Property [{$name}] could not be resolved on the presenter or the model.");
         }
     }
 
