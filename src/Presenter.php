@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 
-class Presenter implements Jsonable, Arrayable
+abstract class Presenter implements Jsonable, Arrayable
 {
     protected static $mutatorCache;
 
