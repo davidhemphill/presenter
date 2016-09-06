@@ -4,7 +4,7 @@ This package makes it fast, fun, and profitable to decorate your Eloquent models
 
 ### Key differences with other presenter packages
 - Supports multiple decorators/presenters
-- Decorated models can be converted to JSON/array still
+- Decorated models can still be converted to JSON/array with `toJson` and `toArray` or by simply returning it from a controller
 - Supports mutators/magic getters like the ones used in Eloquent (e.g. getFullNameAttribute())
 
 ## Installation
