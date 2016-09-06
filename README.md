@@ -82,7 +82,7 @@ $presentedUser->createdAt();
 
 ## Other
 
-Individual instances can be returned as JSON just like you can with plain Eloquent models, except the mutators you specify on your `Presenter` will also be added to the output.
+Individual instances can be returned as JSON just like you can with plain Eloquent models, except the mutators you specify on your `Presenter` will also be serialized with the output.
 
 ```php
 public function show($id)
@@ -108,7 +108,7 @@ A collection of presented models can be converted to JSON and array format just 
 ```php
 public function index()
 {
-    return User::all()->present(ApiPresenter::class);    
+    return User::all()->present(ApiPresenter::class);
 }
 
 /*
