@@ -62,6 +62,8 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     {
         $sampleModel = $this->createModel();
         $presenter = new SamplePresenter($sampleModel);
+
+        $this->assertInstanceOf(SamplePresenter::class, $presenter);
     }
 
     /** @test */
