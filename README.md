@@ -2,6 +2,8 @@
 
 This package makes it fast, fun, and profitable to decorate your Eloquent models for presentation in views, responses, pdfs, csv files, or anywhere you want.
 
+The idea for this package is explained in this post: [Presenters in Laravel](http://davidhemphill.com/blog/2016/09/06/presenters-in-laravel/)
+
 ### Key differences with other presenter packages
 
 - Supports multiple decorators/presenters
