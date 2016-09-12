@@ -18,20 +18,7 @@ Install the package via composer:
 composer require hemp/presenter
 ```
 
-Add this macro to the `register` method of a Service Provider anywhere in your project:
-
-```php
-public function register()
-{
-    Collection::macro('present', function ($class) {
-        return $this->map(function ($object) use ($class) {
-            return present($object, $class);
-        });
-    });
-}
-```
-
-Or add the Service Provider to the `providers` array in `config/app.php`:
+Presenter adds a `present` Collection macro whichs allows you to present a group of models. To use this, add the Service Provider to the `providers` array in `config/app.php`:
 
 ```php
 'providers' => [
