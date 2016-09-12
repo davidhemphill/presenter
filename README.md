@@ -28,10 +28,14 @@ Collection::macro('present', function ($class) {
 });
 ```
 
-Or add the Service Provider to the `providers` array in `config/app.php`;
+Or add the Service Provider to the `providers` array in `config/app.php`:
 
-```
-Hemp\\Presenter\PresenterServiceProvider
+```php
+'providers' => [
+    // ...
+
+    Hemp\Presenter\PresenterServiceProvider::class,
+],
 ```
 
 ## Create a `Presenter`
