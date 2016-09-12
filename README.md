@@ -18,20 +18,27 @@ Install the package via composer:
 composer require hemp/presenter
 ```
 
-Add this macro in a Service Provider somewhere in your project:
+Add this macro to the `register` method of a Service Provider anywhere in your project:
 
 ```php
-Collection::macro('present', function ($class) {
-    return $this->map(function ($object) use ($class) {
-        return present($object, $class);
+public function register()
+{
+    Collection::macro('present', function ($class) {
+        return $this->map(function ($object) use ($class) {
+            return present($object, $class);
+        });
     });
-});
+}
 ```
 
-Or add the Service Provider to the `providers` array in `config/app.php`;
+Or add the Service Provider to the `providers` array in `config/app.php`:
 
-```
-Hemp\\Presenter\PresenterServiceProvider
+```php
+'providers' => [
+    // ...
+
+    Hemp\Presenter\PresenterServiceProvider::class,
+],
 ```
 
 ## Create a `Presenter`
