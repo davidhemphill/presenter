@@ -135,8 +135,25 @@ abstract class Presenter implements Jsonable, Arrayable
         $mutatedAttributes = $this->mutatorsToArray();
 
         $all = array_merge($this->model->toArray(), $mutatedAttributes);
+        if (! static::$snakeAttributes) {
+            $all = array_combine(
+                array_map(function ($k) {
+                    return Str::camel($k);
+                }, array_keys($all)),
+                $all
+            );
+        }
 
         $items = $this->getArrayableItems($all);
+
+        if (! static::$snakeAttributes) {
+            $items = array_combine(
+                array_map(function ($k) {
+                    return Str::camel($k);
+                }, array_keys($items)),
+                $items
+            );
+        }
 
         return array_intersect_key($all, $items);
     }
