@@ -8,9 +8,29 @@ use Illuminate\Contracts\Support\Arrayable;
 
 abstract class Presenter implements Jsonable, Arrayable
 {
+    /**
+     * The attributes that should be visible in arrays.
+     * @var array
+     */
+    protected $visible = [];
+
+    /**
+     * The attributes that should be hidden in arrays.
+     * @var array
+     */
+    protected $hidden = [];
+
+    /**
+     * The cache of the mutated attributes for each class.
+     * @var array
+     */
     protected static $mutatorCache;
 
-    protected static $snakeAttributes;
+    /**
+     * Indicates whether attributes are snake cased on arrays.
+     * @var bool
+     */
+    public static $snakeAttributes = true;
 
     /**
      * The decorated model
@@ -68,6 +88,26 @@ abstract class Presenter implements Jsonable, Arrayable
     }
 
     /**
+     * Get the visible attributes for the model.
+     *
+     * @return array
+     */
+    public function getVisiblePresenterAttributes()
+    {
+        return $this->visible;
+    }
+
+    /**
+     * Get the hidden attributes for the model.
+     *
+     * @return array
+     */
+    public function getHiddenPresenterAttributes()
+    {
+        return $this->hidden;
+    }
+
+    /**
      * Convert the decorated instance to a string
      * @return string
      */
@@ -94,7 +134,11 @@ abstract class Presenter implements Jsonable, Arrayable
     {
         $mutatedAttributes = $this->mutatorsToArray();
 
-        return array_merge($mutatedAttributes, $this->model->toArray());
+        $all = array_merge($this->model->toArray(), $mutatedAttributes);
+
+        $items = $this->getArrayableItems($all);
+
+        return array_intersect_key($all, $items);
     }
 
     /**
@@ -156,7 +200,6 @@ abstract class Presenter implements Jsonable, Arrayable
 
     /**
      * Get the value of an attribute using its mutator.
-     *
      * @param  string  $key
      * @param  mixed  $value
      * @return mixed
@@ -164,5 +207,24 @@ abstract class Presenter implements Jsonable, Arrayable
     protected function mutateAttribute($key)
     {
         return $this->{'get'.Str::studly($key).'Attribute'}();
+    }
+
+    /**
+     * Get an attribute array of all arrayable values.
+     *
+     * @param  array  $values
+     * @return array
+     */
+    protected function getArrayableItems($values)
+    {
+        if (count($this->getVisiblePresenterAttributes()) > 0) {
+            $values = array_intersect_key($values, array_flip($this->getVisiblePresenterAttributes()));
+        }
+
+        if (count($this->getHiddenPresenterAttributes()) > 0) {
+            $values = array_diff_key($values, array_flip($this->getHiddenPresenterAttributes()));
+        }
+
+        return $values;
     }
 }
