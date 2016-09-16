@@ -262,6 +262,32 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($desired, $users->toJson());
     }
+
+    /** @test */
+    function you_can_paginate_a_presented_collection()
+    {
+        $now = '2015-10-14 12:00:00';
+        $later = '2019-12-14 10:30:00';
+
+        $sampleModel = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $sampleModel2 = TestModel::create([
+            'first_name' => 'Tess',
+            'last_name' => 'Rowlett',
+            'created_at' => $later,
+            'updated_at' => $later,
+        ]);
+
+        $users = TestModel::paginate(1)
+            ->present(SamplePresenter::class);
+
+        $this->assertCount(1, $users);
+    }
 }
 
 class TestModel extends Model
