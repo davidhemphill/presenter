@@ -43,13 +43,6 @@ class PresenterTest extends PHPUnit_Framework_TestCase
                 return present($object, $class);
             });
         });
-
-        Collection::macro('toAssoc', function () {
-            return $this->reduce(function ($items, $pair) {
-                list($key, $value) = $pair;
-                return $items->put($key, $value);
-            }, new static);
-        });
     }
 
     function setUp()
