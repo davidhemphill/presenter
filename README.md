@@ -83,7 +83,7 @@ Or use regular old methods:
 $presentedUser->createdAt();
 ```
 
-## Other
+## Converting Presenters to JSON
 
 Individual instances can be returned as JSON just like you can with plain Eloquent models, except the mutators you specify on your `Presenter` will also be serialized with the output.
 
@@ -132,5 +132,47 @@ public function index()
     "created_at":"2016-10-14 12:00:00",
     "updated_at":"2016-12-14 12:00:00"
 }]
+*/
+```
+
+### Hiding Attributes from array/JSON output
+
+You can also specify `$visible` and `$hidden` properties on your Presenters. Setting `$visible` acts as a whitelist of attributes you want to appear in the array/JSON output. Setting `$hidden` acts as a blacklist of attributes you wish to be hidden from the array/JSON output. This will also remove or show any attributes from the model itself.
+
+Using our example from earlier:
+
+```php
+<?php
+
+namespace App\Presenters;
+
+use Hemp\Presenter\Presenter;
+
+class ApiPresenter extends Presenter
+{
+    protected $hidden = ['first_name', 'last_name'];
+
+    public function createdDate() {
+        return $this->model->created_at->format('n/j/Y');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return trim($this->model->first_name . ' ' . $this->model->last_name);
+    }
+}
+```
+
+This will output something like this. Notice how the `first_name` and `last_name` attributes have been removed:
+
+```
+
+/*
+{
+    "id":1,
+    "full_name":"David Lee Hemphill",
+    "created_at":"2016-10-14 12:00:00",
+    "updated_at":"2016-12-14 12:00:00"
+}
 */
 ```

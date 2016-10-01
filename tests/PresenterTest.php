@@ -167,12 +167,12 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         ]);
 
         $desiredArray = [
-            'full_name' => 'David Lee Hemphill',
             'first_name' => 'David',
             'last_name' => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $later,
             'id' => 1,
+            'full_name' => 'David Lee Hemphill',
         ];
 
         $mutatorArray = [
@@ -182,6 +182,42 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $desired = json_encode($desiredArray);
 
         $decorated = new SamplePresenter($model);
+
+        $this->assertEquals($desired, $decorated->toJson());
+        $this->assertEquals($desiredArray, $decorated->toArray());
+        $this->assertEquals($mutatorArray, $decorated->mutatorsToArray());
+        $this->assertEquals(['full_name'], $decorated->getMutatedAttributes());
+    }
+
+    /** @test */
+    function it_can_camel_case_the_attributes_to_be_converted_to_json_and_arrays()
+    {
+        $now = '2016-10-14 12:00:00';
+        $later = '2016-12-14 12:00:00';
+
+        $model = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => $now,
+            'updated_at' => $later,
+        ]);
+
+        $desiredArray = [
+            'firstName' => 'David',
+            'lastName' => 'Hemphill',
+            'createdAt' => $now,
+            'updatedAt' => $later,
+            'id' => 1,
+            'fullName' => 'David Lee Hemphill',
+        ];
+
+        $mutatorArray = [
+            'full_name' => 'David Lee Hemphill',
+        ];
+
+        $desired = json_encode($desiredArray);
+
+        $decorated = new SampleCamelCasePresenter($model);
 
         $this->assertEquals($desired, $decorated->toJson());
         $this->assertEquals($desiredArray, $decorated->toArray());
@@ -243,20 +279,20 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $desired = json_encode([
             [
-                'full_name' => 'David Lee Hemphill',
                 'id' => 1,
                 'first_name' => 'David',
                 'last_name' => 'Hemphill',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'full_name' => 'David Lee Hemphill',
             ],
             [
-                'full_name' => 'Tess Lee Rowlett',
                 'id' => 2,
                 'first_name' => 'Tess',
                 'last_name' => 'Rowlett',
                 'created_at' => $later,
                 'updated_at' => $later,
+                'full_name' => 'Tess Lee Rowlett',
             ]
         ]);
 
@@ -288,6 +324,72 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $users);
     }
+
+    /** @test */
+    function a_presenter_can_specify_attributes_to_hide()
+    {
+        $sampleModel = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => '2015-10-14 12:00:00',
+            'updated_at' => '2015-10-14 12:00:00',
+        ]);
+
+        $presenter = $sampleModel->present(HideAttributesPresenter::class);
+
+        $this->assertEquals(
+            ['first_name', 'last_name', 'created_at', 'updated_at'],
+            $presenter->getHiddenPresenterAttributes()
+        );
+    }
+
+    /** @test */
+    function a_presenter_can_specify_attributes_to_hide_from_json_or_array_output()
+    {
+        $now = '2015-10-14 12:00:00';
+        $later = '2019-12-14 10:30:00';
+
+        $sampleModel = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $presentedModel = $sampleModel
+            ->present(HideAttributesPresenter::class);
+
+        $desired = json_encode([
+            'id' => 1,
+            'full_name' => 'David Lee Hemphill',
+        ]);
+
+        $this->assertEquals($desired, (string) $presentedModel);
+    }
+
+    /** @test */
+    function a_presenter_can_specify_attributes_to_show_in_json_or_array_output()
+    {
+        $now = '2015-10-14 12:00:00';
+        $later = '2019-12-14 10:30:00';
+
+        $sampleModel = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $presentedModel = $sampleModel
+            ->present(ShowAttributesPresenter::class);
+
+        $desired = json_encode([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+        ]);
+
+        $this->assertEquals($desired, (string) $presentedModel);
+    }
 }
 
 class TestModel extends Model
@@ -307,6 +409,26 @@ class TestModel extends Model
     }
 }
 
+class HideAttributesPresenter extends Presenter
+{
+    protected $hidden = ['first_name', 'last_name', 'created_at', 'updated_at'];
+
+    public function getFullNameAttribute()
+    {
+        return $this->model->first_name . ' Lee ' . $this->model->last_name;
+    }
+}
+
+class ShowAttributesPresenter extends Presenter
+{
+    protected $visible = ['first_name', 'last_name'];
+
+    public function getFullNameAttribute()
+    {
+        return $this->model->first_name . ' Lee ' . $this->model->last_name;
+    }
+}
+
 class SamplePresenter extends Presenter
 {
     public function overloadedMethod()
@@ -323,6 +445,11 @@ class SamplePresenter extends Presenter
     {
         return $this->model->first_name . ' Lee ' . $this->model->last_name;
     }
+}
+
+class SampleCamelCasePresenter extends SamplePresenter
+{
+    public static $snakeAttributes = false;
 }
 
 class OtherSamplePresenter extends Presenter
