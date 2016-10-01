@@ -83,7 +83,7 @@ Or use regular old methods:
 $presentedUser->createdAt();
 ```
 
-## Other
+## Converting Presenters to JSON
 
 Individual instances can be returned as JSON just like you can with plain Eloquent models, except the mutators you specify on your `Presenter` will also be serialized with the output.
 
@@ -137,7 +137,7 @@ public function index()
 
 ### Hiding Attributes from array/JSON output
 
-You can also specify `$visible` and `$hidden` properties on your Presenters. Setting `$visible` acts as a white-list of attributes you want to appear in the array/JSON output. Setting `$hidden` acts as a black-list of attributes you wish to be hidden from the array/JSON output. This will also remove or show any attributes from the model itself.
+You can also specify `$visible` and `$hidden` properties on your Presenters. Setting `$visible` acts as a whitelist of attributes you want to appear in the array/JSON output. Setting `$hidden` acts as a blacklist of attributes you wish to be hidden from the array/JSON output. This will also remove or show any attributes from the model itself.
 
 Using our example from earlier:
 
