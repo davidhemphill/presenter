@@ -176,3 +176,11 @@ This will output something like this. Notice how the `first_name` and `last_name
 }
 */
 ```
+
+## Support
+
+If you're using this package, I would love to know about it!
+
+If you're having trouble getting something to work when using this package, contact me on [Twitter](https://twitter.com/davidhemphill). I'd be glad to help.
+
+If you believe you have found an bug, improvement, or other issue, please report it using the [GitHub issue tracker](https://github.com/davidhemphill/presenter/issues), or fork the repository and submit a pull request.
