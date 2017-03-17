@@ -6,15 +6,15 @@ if (!function_exists('present')) {
     /**
      * Helper to Present Models
      * @param  string $model
-     * @param  \Closure|string $presentationStrategy
+     * @param  \Closure|string $presenter
      * @return object
      */
-    function present($model, $presentationStrategy)
+    function present($model, $presenter)
     {
-        if ($presentationStrategy instanceof \Closure) {
-            return new EmptyModel($presentationStrategy($model));
+        if ($presenter instanceof \Closure) {
+            return new EmptyModel($presenter($model));
         }
 
-        return new $presentationStrategy($model);
+        return new $presenter($model);
     }
 }
