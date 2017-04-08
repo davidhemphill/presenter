@@ -36,10 +36,16 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         });
     }
 
-    function registerCollectionMacro()
+    function registerCollectionMacros()
     {
         Collection::macro('present', function ($class) {
             return $this->map(function ($object) use ($class) {
+                return present($object, $class);
+            });
+        });
+
+        Collection::macro('presentTransformed', function ($class) {
+            return $this->transform(function ($object) use ($class) {
                 return present($object, $class);
             });
         });
@@ -49,7 +55,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->setUpDatabase();
-        $this->registerCollectionMacro();
+        $this->registerCollectionMacros();
     }
 
     function createModel()
@@ -153,6 +159,25 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('David Lee Hemphill', $firstUser->full_name);
     }
 
+        /** @test */
+    function you_can_transform_a_collection_of_eloquent_models()
+    {
+        $sampleModel = $this->createModel();
+
+        $users = collect([$sampleModel]);
+
+        $this->assertSame(
+            $users,
+            $users->presentTransformed(SamplePresenter::class)
+        );
+
+        $firstUser = $users->first();
+
+        $this->assertNotNull($firstUser);
+        $this->assertEquals('David Hemphill', $firstUser->name());
+        $this->assertEquals('David Lee Hemphill', $firstUser->full_name);
+    }
+
     /** @test */
     function it_can_be_converted_to_json_and_arrays()
     {
@@ -248,6 +273,36 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $users = TestModel::all()
             ->present(SamplePresenter::class)
             ->present(OtherSamplePresenter::class);
+
+        $this->assertEquals(2015, $users->first()->published_year);
+        $this->assertEquals(2015, $users->first()->publishedYear());
+
+        $this->assertInstanceOf(OtherSamplePresenter::class, $users->first());
+    }
+
+        /** @test */
+    function you_can_transform_a_collection_multiple_times()
+    {
+        $now = '2015-10-14 12:00:00';
+        $later = '2019-12-14 10:30:00';
+
+        $sampleModel = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $sampleModel2 = TestModel::create([
+            'first_name' => 'Tess',
+            'last_name' => 'Rowlett',
+            'created_at' => $later,
+            'updated_at' => $later,
+        ]);
+
+        $users = TestModel::all()
+            ->presentTransformed(SamplePresenter::class)
+            ->presentTransformed(OtherSamplePresenter::class);
 
         $this->assertEquals(2015, $users->first()->published_year);
         $this->assertEquals(2015, $users->first()->publishedYear());

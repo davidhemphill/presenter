@@ -14,6 +14,12 @@ class PresenterServiceProvider extends ServiceProvider
                 return present($object, $class);
             });
         });
+
+        Collection::macro('presentTransformed', function ($class) {
+            return $this->transform(function ($object) use ($class) {
+                return present($object, $class);
+            });
+        });
     }
 
     public function register()
