@@ -146,6 +146,18 @@ class PresenterTest extends PHPUnit_Framework_TestCase
    }
 
     /** @test */
+    function it_can_present_a_model_by_using_a_closure()
+    {
+        $presented = $this->createModel()->present(function ($user) {
+            return [
+                'full_name' => strtolower($user->first_name . ' ' . $user->last_name),
+            ];
+        });
+
+        $this->assertEquals('david hemphill', $presented->full_name);
+    }
+
+    /** @test */
     function you_can_wrap_a_collection_of_eloquent_models()
     {
         $sampleModel = $this->createModel();
@@ -176,6 +188,23 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($firstUser);
         $this->assertEquals('David Hemphill', $firstUser->name());
         $this->assertEquals('David Lee Hemphill', $firstUser->full_name);
+    }
+
+    /** @test */
+    function you_can_present_a_collection_of_models_using_a_closure()
+    {
+        $sampleModel = $this->createModel();
+
+        $users = collect([$sampleModel])->present(function ($user) {
+            return [
+                'full_name' => strtolower($user->first_name . ' ' . $user->last_name),
+            ];
+        });
+
+        $firstUser = $users->first();
+
+        $this->assertNotNull($firstUser);
+        $this->assertEquals('david hemphill', $firstUser->full_name);
     }
 
     /** @test */
