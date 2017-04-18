@@ -63,17 +63,13 @@ abstract class Presenter implements Jsonable, Arrayable
      */
     public function __get($name)
     {
-        try {
-            $method = 'get' . studly_case($name) . 'Attribute';
+        $method = 'get' . studly_case($name) . 'Attribute';
 
-            if (method_exists($this, $method)) {
-                return $this->{$method}($name);
-            }
-
-            return $this->model->{$name};
-        } catch (Exception $e) {
-            throw new Exception("Property [{$name}] could not be resolved on the presenter or the model.");
+        if (method_exists($this, $method)) {
+            return $this->{$method}($name);
         }
+
+        return $this->model->{$name};
     }
 
     /**
