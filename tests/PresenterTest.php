@@ -3,15 +3,16 @@
 namespace Hemp\Tests\Presentable;
 
 use Hemp\Presenter\Presenter;
-use PHPUnit_Framework_TestCase;
 use Hemp\Presenter\Presentable;
+use PHPUnit_Framework_TestCase;
 use Illuminate\Support\Collection;
+use Hemp\Presenter\PresenterFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Capsule\Manager;
 
 class PresenterTest extends PHPUnit_Framework_TestCase
 {
-    function setupDatabase()
+    public function setupDatabase()
     {
         $capsule = new Manager;
 
@@ -28,7 +29,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $capsule->setAsGlobal();
         $capsule->bootEloquent();
 
-        Manager::schema()->create('test_models', function($table) {
+        Manager::schema()->create('test_models', function ($table) {
             $table->increments('id');
             $table->string('first_name');
             $table->string('last_name');
@@ -36,29 +37,29 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         });
     }
 
-    function registerCollectionMacros()
+    public function registerCollectionMacros()
     {
         Collection::macro('present', function ($class) {
             return $this->map(function ($object) use ($class) {
-                return present($object, $class);
+                return (new PresenterFactory)($object, $class);
             });
         });
 
         Collection::macro('presentTransformed', function ($class) {
             return $this->transform(function ($object) use ($class) {
-                return present($object, $class);
+                return (new PresenterFactory)($object, $class);
             });
         });
     }
 
-    function setUp()
+    public function setUp()
     {
         parent::setUp();
         $this->setUpDatabase();
         $this->registerCollectionMacros();
     }
 
-    function createModel()
+    public function createModel()
     {
         return new TestModel([
             'first_name' => 'David',
@@ -67,7 +68,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function it_decorates_objects()
+    public function it_decorates_objects()
     {
         $sampleModel = $this->createModel();
         $presenter = new SamplePresenter($sampleModel);
@@ -76,7 +77,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function you_can_get_the_decorated_model()
+    public function you_can_get_the_decorated_model()
     {
         $sampleModel = $this->createModel();
         $presenter = new SamplePresenter($sampleModel);
@@ -85,7 +86,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function it_can_have_its_own_methods()
+    public function it_can_have_its_own_methods()
     {
         $sampleModel = $this->createModel();
         $presenter = new SamplePresenter($sampleModel);
@@ -94,7 +95,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function it_can_call_the_decorated_objects_methods()
+    public function it_can_call_the_decorated_objects_methods()
     {
         $sampleModel = $this->createModel();
         $presenter = new SamplePresenter($sampleModel);
@@ -103,7 +104,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function it_can_return_the_decorated_objects_properties()
+    public function it_can_return_the_decorated_objects_properties()
     {
         $sampleModel = $this->createModel();
         $presenter = new SamplePresenter($sampleModel);
@@ -112,7 +113,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function it_can_overload_the_decorated_objects_methods()
+    public function it_can_overload_the_decorated_objects_methods()
     {
         $sampleModel = $this->createModel();
         $presenter = new SamplePresenter($sampleModel);
@@ -121,7 +122,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function it_can_have_its_own_magic_properties()
+    public function it_can_have_its_own_magic_properties()
     {
         $sampleModel = $this->createModel();
         $presenter = new SamplePresenter($sampleModel);
@@ -130,7 +131,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
    /** @test */
-   function you_can_call_present_on_an_eloquent_model_using_the_trait()
+   public function you_can_call_present_on_an_eloquent_model_using_the_trait()
    {
        $presentedModel = $this->createModel()->present(SamplePresenter::class);
 
@@ -138,7 +139,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
    }
 
    /** @test */
-   function you_can_use_a_helper_function_to_decorate_a_model()
+   public function you_can_use_a_helper_function_to_decorate_a_model()
    {
        $presentedModel = present($this->createModel(), SamplePresenter::class);
 
@@ -146,7 +147,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
    }
 
     /** @test */
-    function it_can_present_a_model_by_using_a_closure()
+    public function it_can_present_a_model_by_using_a_closure()
     {
         $presented = $this->createModel()->present(function ($user) {
             return [
@@ -158,7 +159,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function you_can_wrap_a_collection_of_eloquent_models()
+    public function you_can_wrap_a_collection_of_eloquent_models()
     {
         $sampleModel = $this->createModel();
 
@@ -172,7 +173,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
         /** @test */
-    function you_can_transform_a_collection_of_eloquent_models()
+    public function you_can_transform_a_collection_of_eloquent_models()
     {
         $sampleModel = $this->createModel();
 
@@ -191,7 +192,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function you_can_present_a_collection_of_models_using_a_closure()
+    public function you_can_present_a_collection_of_models_using_a_closure()
     {
         $sampleModel = $this->createModel();
 
@@ -208,7 +209,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function it_can_be_converted_to_json_and_arrays()
+    public function it_can_be_converted_to_json_and_arrays()
     {
         $now = '2016-10-14 12:00:00';
         $later = '2016-12-14 12:00:00';
@@ -244,7 +245,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function it_can_camel_case_the_attributes_to_be_converted_to_json_and_arrays()
+    public function it_can_camel_case_the_attributes_to_be_converted_to_json_and_arrays()
     {
         $now = '2016-10-14 12:00:00';
         $later = '2016-12-14 12:00:00';
@@ -280,7 +281,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function you_can_present_a_collection_multiple_times()
+    public function you_can_present_a_collection_multiple_times()
     {
         $now = '2015-10-14 12:00:00';
         $later = '2019-12-14 10:30:00';
@@ -310,7 +311,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
         /** @test */
-    function you_can_transform_a_collection_multiple_times()
+    public function you_can_transform_a_collection_multiple_times()
     {
         $now = '2015-10-14 12:00:00';
         $later = '2019-12-14 10:30:00';
@@ -340,7 +341,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function a_collection_of_decorated_eloquent_models_will_still_return_json()
+    public function a_collection_of_decorated_eloquent_models_will_still_return_json()
     {
         $now = '2015-10-14 12:00:00';
         $later = '2019-12-14 10:30:00';
@@ -384,7 +385,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function you_can_paginate_a_presented_collection()
+    public function you_can_paginate_a_presented_collection()
     {
         $now = '2015-10-14 12:00:00';
         $later = '2019-12-14 10:30:00';
@@ -410,7 +411,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function a_presenter_can_specify_attributes_to_hide()
+    public function a_presenter_can_specify_attributes_to_hide()
     {
         $sampleModel = TestModel::create([
             'first_name' => 'David',
@@ -428,7 +429,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function a_presenter_can_specify_attributes_to_hide_from_json_or_array_output()
+    public function a_presenter_can_specify_attributes_to_hide_from_json_or_array_output()
     {
         $now = '2015-10-14 12:00:00';
         $later = '2019-12-14 10:30:00';
@@ -452,7 +453,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function a_presenter_can_specify_attributes_to_show_in_json_or_array_output()
+    public function a_presenter_can_specify_attributes_to_show_in_json_or_array_output()
     {
         $now = '2015-10-14 12:00:00';
         $later = '2019-12-14 10:30:00';

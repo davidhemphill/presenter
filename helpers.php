@@ -1,6 +1,6 @@
 <?php
 
-use Hemp\Presenter\EmptyModel;
+use Hemp\Presenter\PresenterFactory;
 
 if (!function_exists('present')) {
     /**
@@ -11,10 +11,6 @@ if (!function_exists('present')) {
      */
     function present($model, $presenter)
     {
-        if ($presenter instanceof \Closure) {
-            return new EmptyModel($presenter($model));
-        }
-
-        return new $presenter($model);
+        return (new PresenterFactory)($model, $presenter);
     }
 }
