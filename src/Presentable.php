@@ -2,6 +2,8 @@
 
 namespace Hemp\Presenter;
 
+use Hemp\Presenter\PresenterFactory;
+
 trait Presentable
 {
     /**
@@ -11,6 +13,6 @@ trait Presentable
      */
     public function present($presenter)
     {
-        return present($this, $presenter);
+        return (new PresenterFactory)($this, $presenter);
     }
 }
