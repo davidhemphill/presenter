@@ -39,15 +39,17 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
     public function registerCollectionMacros()
     {
-        Collection::macro('present', function ($class) {
-            return $this->map(function ($object) use ($class) {
-                return (new PresenterFactory)($object, $class);
+        $factory = new PresenterFactory;
+
+        Collection::macro('present', function ($class) use ($factory) {
+            return $this->map(function ($object) use ($class, $factory) {
+                return $factory($object, $class);
             });
         });
 
-        Collection::macro('presentTransformed', function ($class) {
-            return $this->transform(function ($object) use ($class) {
-                return (new PresenterFactory)($object, $class);
+        Collection::macro('presentTransformed', function ($class) use ($factory) {
+            return $this->transform(function ($object) use ($class, $factory) {
+                return $factory($object, $class);
             });
         });
     }

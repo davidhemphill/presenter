@@ -13,6 +13,7 @@ trait Presentable
      */
     public function present($presenter)
     {
-        return (new PresenterFactory)($this, $presenter);
+        $factory = new PresenterFactory;
+        return $factory($this, $presenter);
     }
 }

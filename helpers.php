@@ -11,6 +11,7 @@ if (!function_exists('present')) {
      */
     function present($model, $presenter)
     {
-        return (new PresenterFactory)($model, $presenter);
+        $factory = new PresenterFactory;
+        return $factory($model, $presenter);
     }
 }
