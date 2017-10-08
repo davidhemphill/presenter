@@ -61,7 +61,7 @@ abstract class Presenter implements Jsonable, Arrayable
 
     /**
      * Get the decorated model
-     * @var Illuminate/Database/Eloquent/Model|Hemp/Presneter/Presenter
+     * @return Illuminate/Database/Eloquent/Model|Hemp/Presneter/Presenter
      */
     public function getModel()
     {
