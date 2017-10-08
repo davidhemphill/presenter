@@ -34,9 +34,15 @@ abstract class Presenter implements Jsonable, Arrayable
 
     /**
      * The decorated model
-     * @var Illuminate/Database/Eloquent/Model
+     * @var Illuminate/Database/Eloquent/Model|Hemp/Presenter/Presenter
      */
     protected $model;
+
+    /**
+     * The original, undecorated model.
+     * @var Illuminate/Database/Eloquent/Model
+     */
+    protected $originalModel;
 
     /**
      * Create a new instance of the Presenter
@@ -45,15 +51,30 @@ abstract class Presenter implements Jsonable, Arrayable
     public function __construct($model)
     {
         $this->model = $model;
+
+        if ($this->model instanceof Presenter) {
+            $model = $model->getOriginalModel();
+        }
+
+        $this->originalModel = $model;
     }
 
     /**
      * Get the decorated model
-     * @return Illuminate/Database/Eloquent/Model
+     * @return Illuminate/Database/Eloquent/Model|Hemp/Presneter/Presenter
      */
     public function getModel()
     {
         return $this->model;
+    }
+
+    /**
+     * Get the original, undecorated model
+     * @return Illuminate/Database/Eloquent/Model
+     */
+    public function getOriginalModel()
+    {
+        return $this->originalModel;
     }
 
     /**
