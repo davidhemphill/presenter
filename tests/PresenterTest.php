@@ -88,6 +88,26 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function you_can_get_the_decorated_presenters()
+    {
+        $sampleModel = $this->createModel();
+        $presenter = new SamplePresenter($sampleModel);
+        $otherPresenter = new OtherSamplePresenter($presenter);
+
+        $this->assertSame($presenter, $otherPresenter->getModel());
+    }
+
+    /** @test */
+    public function you_can_get_the_original_model()
+    {
+        $sampleModel = $this->createModel();
+        $presenter = new SamplePresenter($sampleModel);
+        $presenter = new OtherSamplePresenter($presenter);
+
+        $this->assertSame($sampleModel, $presenter->getOriginalModel());
+    }
+
+    /** @test */
     public function it_can_have_its_own_methods()
     {
         $sampleModel = $this->createModel();
