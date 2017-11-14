@@ -5,8 +5,10 @@ namespace Hemp\Presenter;
 use Illuminate\Support\Str;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
+use ArrayAccess;
+use BadMethodCallException;
 
-abstract class Presenter implements Jsonable, Arrayable
+abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
 {
     /**
      * The attributes that should be visible in arrays.
@@ -260,5 +262,67 @@ abstract class Presenter implements Jsonable, Arrayable
         }
 
         return $values;
+    }
+
+     /**
+     * Return true if the property is set and not null.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        return $this->offsetExists($name);
+    }
+
+    /**
+     * Return true if the offset exists and is not null.
+     *
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return $this->{$offset} !== null;
+    }
+
+    /**
+     * Return the value at the specified offset.
+     *
+     * @param mixed $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->{$offset};
+    }
+
+    /**
+     * Required implementation to satisfy the ArrayAccess interface,
+     * but throws as a BadMethodCallException as this is a read only
+     * implementation.
+     *
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     * @throws \BadMethodCallException
+     */
+    public function offsetSet($offset, $value)
+    {
+        throw new BadMethodCallException('Not implemented - read only implementation.');
+    }
+
+    /**
+     * Required implementation to satisfy the ArrayAccess interface,
+     * but throws as a BadMethodCallException as this is a read only
+     * implementation.
+     *
+     * @param mixed $offset
+     * @return void
+     * @throws \BadMethodCallException
+     */
+    public function offsetUnset($offset)
+    {
+        throw new BadMethodCallException('Not implemented - read only implementation.');
     }
 }
