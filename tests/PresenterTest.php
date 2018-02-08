@@ -532,7 +532,10 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('David Lee Hemphill', $presenter['full_name']);
     }
 
-    /** @test */
+    /**
+     * @test 
+     * @expectedException BadMethodCallException
+     * */
     public function it_cannot_be_written_to_via_array_access()
     {
         $sampleModel = TestModel::create([
@@ -543,8 +546,6 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         ]);
 
         $presenter = $sampleModel->present(SamplePresenter::class);
-
-        $this->setExpectedException(\BadMethodCallException::class);
 
         $presenter['first_name'] = 'should not update';
     }
