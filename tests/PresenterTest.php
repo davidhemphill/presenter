@@ -214,6 +214,23 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function you_can_access_a_collection_of_eloquent_models()
+    {
+        $sampleModel = $this->createModel();
+
+        $users = collect([$sampleModel])->present(SamplePresenter::class);
+
+        $this->assertEquals(
+            collect(['David']),
+            $users->pluck('first_name')
+        );
+
+        $this->assertEquals(
+            collect(['David Lee Hemphill']),
+            $users->pluck('full_name'));
+    }
+
+    /** @test */
     public function you_can_present_a_collection_of_models_using_a_closure()
     {
         $sampleModel = $this->createModel();
@@ -496,6 +513,41 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         ]);
 
         $this->assertEquals($desired, (string) $presentedModel);
+    }
+
+    /** @test */
+    public function it_can_be_array_accessed()
+    {
+        $sampleModel = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => '2015-10-14 12:00:00',
+            'updated_at' => '2015-10-14 12:00:00',
+        ]);
+
+        $presenter = $sampleModel->present(SamplePresenter::class);
+
+        $this->assertEquals('David', $presenter['first_name']);
+
+        $this->assertEquals('David Lee Hemphill', $presenter['full_name']);
+    }
+
+    /**
+     * @test 
+     * @expectedException BadMethodCallException
+     * */
+    public function it_cannot_be_written_to_via_array_access()
+    {
+        $sampleModel = TestModel::create([
+            'first_name' => 'David',
+            'last_name' => 'Hemphill',
+            'created_at' => '2015-10-14 12:00:00',
+            'updated_at' => '2015-10-14 12:00:00',
+        ]);
+
+        $presenter = $sampleModel->present(SamplePresenter::class);
+
+        $presenter['first_name'] = 'should not update';
     }
 }
 
