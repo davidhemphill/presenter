@@ -65,6 +65,12 @@ Or use the `Presentable` trait on your model and call `present` on it:
 $presentedUser = User::first()->present(ApiPresenter::class);
 ```
 
+Or, when using the `Presentable` trait, specify a default presenter using the `defaultPresenter` attribute on the Model and call `present` to use it:
+
+```php
+$presentedUser = User::first()->present();
+```
+
 Use the `present` macro on a Collection object:
 
 ```php
