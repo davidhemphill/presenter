@@ -69,6 +69,11 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         ]);
     }
 
+    public function createModelWithDefaultPresenter()
+    {
+        return new TestModelWithDefaultPresenter();
+    }
+
     /** @test */
     public function it_decorates_objects()
     {
@@ -160,10 +165,27 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Presenter::class, $presentedModel);
     }
 
-    /** @test */
-    public function you_can_use_a_helper_function_to_decorate_a_model()
-    {
-        $presentedModel = present($this->createModel(), SamplePresenter::class);
+   /** @test */
+   public function you_can_call_present_on_an_eloquent_model_using_the_trait_and_use_default_presenter()
+   {
+       $presentedModel = $this->createModelWithDefaultPresenter()->present();
+
+       $this->assertInstanceOf(SamplePresenter::class, $presentedModel);
+   }
+
+   /**
+    * @test
+    * @expectedException     BadMethodCallException
+    */
+   public function you_can_not_call_present_on_an_eloquent_model_without_default_presenter_or_presenter()
+   {
+       $presentedModel = $this->createModel()->present();
+   }
+
+   /** @test */
+   public function you_can_use_a_helper_function_to_decorate_a_model()
+   {
+       $presentedModel = present($this->createModel(), SamplePresenter::class);
 
         $this->assertInstanceOf(Presenter::class, $presentedModel);
     }
@@ -566,6 +588,12 @@ class TestModel extends Model
     {
         return 90210;
     }
+}
+
+class TestModelWithDefaultPresenter extends Model {
+    use Presentable;
+
+    protected $defaultPresenter = SamplePresenter::class;
 }
 
 class HideAttributesPresenter extends Presenter
