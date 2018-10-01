@@ -2,13 +2,13 @@
 
 namespace Hemp\Tests\Presentable;
 
-use Hemp\Presenter\Presentable;
 use Hemp\Presenter\Presenter;
-use Hemp\Presenter\PresenterFactory;
-use Illuminate\Database\Capsule\Manager;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
+use Hemp\Presenter\Presentable;
 use PHPUnit_Framework_TestCase;
+use Illuminate\Support\Collection;
+use Hemp\Presenter\PresenterFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Capsule\Manager;
 
 class PresenterTest extends PHPUnit_Framework_TestCase
 {

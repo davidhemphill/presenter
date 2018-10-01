@@ -4,9 +4,9 @@ namespace Hemp\Presenter;
 
 use ArrayAccess;
 use BadMethodCallException;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Str;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Contracts\Support\Arrayable;
 
 abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
 {
@@ -171,7 +171,7 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
         $mutatedAttributes = $this->mutatorsToArray();
 
         $all = array_merge($this->model->toArray(), $mutatedAttributes);
-        if (!static::$snakeAttributes) {
+        if (! static::$snakeAttributes) {
             $all = array_combine(
                 array_map(function ($k) {
                     return Str::camel($k);
@@ -182,7 +182,7 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
 
         $items = $this->getArrayableItems($all);
 
-        if (!static::$snakeAttributes) {
+        if (! static::$snakeAttributes) {
             $items = array_combine(
                 array_map(function ($k) {
                     return Str::camel($k);
@@ -221,7 +221,7 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     {
         $class = static::class;
 
-        if (!isset(static::$mutatorCache[$class])) {
+        if (! isset(static::$mutatorCache[$class])) {
             static::cacheMutatedAttributes($class);
         }
 
