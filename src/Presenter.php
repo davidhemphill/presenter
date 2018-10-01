@@ -2,59 +2,66 @@
 
 namespace Hemp\Presenter;
 
-use Illuminate\Support\Str;
-use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Contracts\Support\Arrayable;
 use ArrayAccess;
 use BadMethodCallException;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Support\Str;
 
 abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
 {
     /**
      * The attributes that should be visible in arrays.
+     *
      * @var array
      */
     protected $visible = [];
 
     /**
      * The attributes that should be hidden in arrays.
+     *
      * @var array
      */
     protected $hidden = [];
 
     /**
      * The cache of the mutated attributes for each class.
+     *
      * @var array
      */
     protected static $mutatorCache;
 
     /**
      * Indicates whether attributes are snake cased on arrays.
+     *
      * @var bool
      */
     public static $snakeAttributes = true;
 
     /**
-     * The decorated model
+     * The decorated model.
+     *
      * @var Illuminate/Database/Eloquent/Model|Hemp/Presenter/Presenter
      */
     protected $model;
 
     /**
      * The original, undecorated model.
+     *
      * @var Illuminate/Database/Eloquent/Model
      */
     protected $originalModel;
 
     /**
-     * Create a new instance of the Presenter
+     * Create a new instance of the Presenter.
+     *
      * @param Illuminate/Database/Eloquent/Model $model
      */
     public function __construct($model)
     {
         $this->model = $model;
 
-        if ($this->model instanceof Presenter) {
+        if ($this->model instanceof self) {
             $model = $model->getOriginalModel();
         }
 
@@ -62,7 +69,8 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Get the decorated model
+     * Get the decorated model.
+     *
      * @return Illuminate/Database/Eloquent/Model|Hemp/Presneter/Presenter
      */
     public function getModel()
@@ -71,7 +79,8 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Get the original, undecorated model
+     * Get the original, undecorated model.
+     *
      * @return Illuminate/Database/Eloquent/Model
      */
     public function getOriginalModel()
@@ -80,13 +89,15 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Pass magic properties to accessors
-     * @param  string $name
+     * Pass magic properties to accessors.
+     *
+     * @param string $name
+     *
      * @return mixed
      */
     public function __get($name)
     {
-        $method = 'get' . studly_case($name) . 'Attribute';
+        $method = 'get'.studly_case($name).'Attribute';
 
         if (method_exists($this, $method)) {
             return $this->{$method}($name);
@@ -96,9 +107,11 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Call the model's version of the method if available
-     * @param  string $method
-     * @param  array $args
+     * Call the model's version of the method if available.
+     *
+     * @param string $method
+     * @param array  $args
+     *
      * @return mixed
      */
     public function __call($method, $args)
@@ -127,7 +140,8 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Convert the decorated instance to a string
+     * Convert the decorated instance to a string.
+     *
      * @return string
      */
     public function __toString()
@@ -136,8 +150,10 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Convert the decorated instance to JSON
-     * @param  integer $options
+     * Convert the decorated instance to JSON.
+     *
+     * @param int $options
+     *
      * @return string
      */
     public function toJson($options = 0)
@@ -146,7 +162,8 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Convert the decorator instance to an array
+     * Convert the decorator instance to an array.
+     *
      * @return array
      */
     public function toArray()
@@ -154,7 +171,7 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
         $mutatedAttributes = $this->mutatorsToArray();
 
         $all = array_merge($this->model->toArray(), $mutatedAttributes);
-        if (! static::$snakeAttributes) {
+        if (!static::$snakeAttributes) {
             $all = array_combine(
                 array_map(function ($k) {
                     return Str::camel($k);
@@ -165,7 +182,7 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
 
         $items = $this->getArrayableItems($all);
 
-        if (! static::$snakeAttributes) {
+        if (!static::$snakeAttributes) {
             $items = array_combine(
                 array_map(function ($k) {
                     return Str::camel($k);
@@ -179,6 +196,7 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
 
     /**
      * Convert the decorators instance's mutators to an array.
+     *
      * @return array
      */
     public function mutatorsToArray()
@@ -196,13 +214,14 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
 
     /**
      * Get the mutated attributes for a given instance.
+     *
      * @return array
      */
     public function getMutatedAttributes()
     {
         $class = static::class;
 
-        if (! isset(static::$mutatorCache[$class])) {
+        if (!isset(static::$mutatorCache[$class])) {
             static::cacheMutatedAttributes($class);
         }
 
@@ -211,7 +230,9 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
 
     /**
      * Extract and cache all the mutated attributes of a class.
-     * @param  string  $class
+     *
+     * @param string $class
+     *
      * @return void
      */
     public static function cacheMutatedAttributes($class)
@@ -236,8 +257,10 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
 
     /**
      * Get the value of an attribute using its mutator.
-     * @param  string  $key
-     * @param  mixed  $value
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return mixed
      */
     protected function mutateAttribute($key)
@@ -248,7 +271,8 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     /**
      * Get an attribute array of all arrayable values.
      *
-     * @param  array  $values
+     * @param array $values
+     *
      * @return array
      */
     protected function getArrayableItems($values)
@@ -264,10 +288,11 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
         return $values;
     }
 
-     /**
+    /**
      * Return true if the property is set and not null.
      *
      * @param string $name
+     *
      * @return bool
      */
     public function __isset($name)
@@ -279,6 +304,7 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
      * Return true if the offset exists and is not null.
      *
      * @param mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -290,6 +316,7 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
      * Return the value at the specified offset.
      *
      * @param mixed $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
@@ -304,8 +331,10 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
      *
      * @param mixed $offset
      * @param mixed $value
-     * @return void
+     *
      * @throws \BadMethodCallException
+     *
+     * @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -318,8 +347,10 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
      * implementation.
      *
      * @param mixed $offset
-     * @return void
+     *
      * @throws \BadMethodCallException
+     *
+     * @return void
      */
     public function offsetUnset($offset)
     {
