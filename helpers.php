@@ -2,7 +2,7 @@
 
 use Hemp\Presenter\PresenterFactory;
 
-if (!function_exists('present')) {
+if (! function_exists('present')) {
     /**
      * Helper to Present Models.
      *

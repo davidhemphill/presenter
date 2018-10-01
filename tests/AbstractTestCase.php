@@ -2,8 +2,8 @@
 
 namespace Hemp\Tests\Presentable;
 
-use GrahamCampbell\TestBench\AbstractPackageTestCase;
 use Hemp\Presenter\PresenterServiceProvider;
+use GrahamCampbell\TestBench\AbstractPackageTestCase;
 
 abstract class AbstractTestCase extends AbstractPackageTestCase
 {

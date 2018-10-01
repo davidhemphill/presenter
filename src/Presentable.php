@@ -13,8 +13,8 @@ trait Presentable
      */
     public function present($presenter = null)
     {
-        if (!$presenter) {
-            if (!$this->defaultPresenter) {
+        if (! $presenter) {
+            if (! $this->defaultPresenter) {
                 throw new \BadMethodCallException('No presenter or default presenter passed to present()');
             }
             $presenter = $this->defaultPresenter;
