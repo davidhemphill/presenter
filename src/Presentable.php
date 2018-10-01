@@ -2,13 +2,12 @@
 
 namespace Hemp\Presenter;
 
-use Hemp\Presenter\PresenterFactory;
-
 trait Presentable
 {
     /**
      * Present this instance using the provided Presenter class
-     * @param  ?string $presenter
+     *
+     * @param  string $presenter
      * @return Hemp\Presenter
      */
     public function present($presenter = null)
@@ -20,7 +19,8 @@ trait Presentable
             $presenter = $this->defaultPresenter;
         }
 
-        $factory = new PresenterFactory;
+        $factory = new PresenterFactory();
+
         return $factory($this, $presenter);
     }
 }

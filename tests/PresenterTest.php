@@ -2,19 +2,19 @@
 
 namespace Hemp\Tests\Presentable;
 
-use Hemp\Presenter\Presenter;
 use Hemp\Presenter\Presentable;
-use PHPUnit_Framework_TestCase;
-use Illuminate\Support\Collection;
+use Hemp\Presenter\Presenter;
 use Hemp\Presenter\PresenterFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Capsule\Manager;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use PHPUnit_Framework_TestCase;
 
 class PresenterTest extends PHPUnit_Framework_TestCase
 {
     public function setupDatabase()
     {
-        $capsule = new Manager;
+        $capsule = new Manager();
 
         $capsule->addConnection([
             'driver'    => 'sqlite',
@@ -39,7 +39,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
     public function registerCollectionMacros()
     {
-        $factory = new PresenterFactory;
+        $factory = new PresenterFactory();
 
         Collection::macro('present', function ($class) use ($factory) {
             return $this->map(function ($object) use ($class, $factory) {
@@ -65,7 +65,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     {
         return new TestModel([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
         ]);
     }
 
@@ -157,13 +157,13 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('David Lee Hemphill', $presenter->full_name);
     }
 
-   /** @test */
-   public function you_can_call_present_on_an_eloquent_model_using_the_trait()
-   {
-       $presentedModel = $this->createModel()->present(SamplePresenter::class);
+    /** @test */
+    public function you_can_call_present_on_an_eloquent_model_using_the_trait()
+    {
+        $presentedModel = $this->createModel()->present(SamplePresenter::class);
 
-       $this->assertInstanceOf(Presenter::class, $presentedModel);
-   }
+        $this->assertInstanceOf(Presenter::class, $presentedModel);
+    }
 
    /** @test */
    public function you_can_call_present_on_an_eloquent_model_using_the_trait_and_use_default_presenter()
@@ -187,15 +187,15 @@ class PresenterTest extends PHPUnit_Framework_TestCase
    {
        $presentedModel = present($this->createModel(), SamplePresenter::class);
 
-       $this->assertInstanceOf(Presenter::class, $presentedModel);
-   }
+        $this->assertInstanceOf(Presenter::class, $presentedModel);
+    }
 
     /** @test */
     public function it_can_present_a_model_by_using_a_closure()
     {
         $presented = $this->createModel()->present(function ($user) {
             return [
-                'full_name' => strtolower($user->first_name . ' ' . $user->last_name),
+                'full_name' => strtolower($user->first_name.' '.$user->last_name),
             ];
         });
 
@@ -216,7 +216,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('David Lee Hemphill', $firstUser->full_name);
     }
 
-        /** @test */
+    /** @test */
     public function you_can_transform_a_collection_of_eloquent_models()
     {
         $sampleModel = $this->createModel();
@@ -259,7 +259,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $users = collect([$sampleModel])->present(function ($user) {
             return [
-                'full_name' => strtolower($user->first_name . ' ' . $user->last_name),
+                'full_name' => strtolower($user->first_name.' '.$user->last_name),
             ];
         });
 
@@ -277,18 +277,18 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $model = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $later,
         ]);
 
         $desiredArray = [
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $later,
-            'id' => 1,
-            'full_name' => 'David Lee Hemphill',
+            'id'         => 1,
+            'full_name'  => 'David Lee Hemphill',
         ];
 
         $mutatorArray = [
@@ -313,18 +313,18 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $model = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $later,
         ]);
 
         $desiredArray = [
             'firstName' => 'David',
-            'lastName' => 'Hemphill',
+            'lastName'  => 'Hemphill',
             'createdAt' => $now,
             'updatedAt' => $later,
-            'id' => 1,
-            'fullName' => 'David Lee Hemphill',
+            'id'        => 1,
+            'fullName'  => 'David Lee Hemphill',
         ];
 
         $mutatorArray = [
@@ -349,14 +349,14 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $sampleModel = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $now,
         ]);
 
         $sampleModel2 = TestModel::create([
             'first_name' => 'Tess',
-            'last_name' => 'Rowlett',
+            'last_name'  => 'Rowlett',
             'created_at' => $later,
             'updated_at' => $later,
         ]);
@@ -371,7 +371,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(OtherSamplePresenter::class, $users->first());
     }
 
-        /** @test */
+    /** @test */
     public function you_can_transform_a_collection_multiple_times()
     {
         $now = '2015-10-14 12:00:00';
@@ -379,14 +379,14 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $sampleModel = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $now,
         ]);
 
         $sampleModel2 = TestModel::create([
             'first_name' => 'Tess',
-            'last_name' => 'Rowlett',
+            'last_name'  => 'Rowlett',
             'created_at' => $later,
             'updated_at' => $later,
         ]);
@@ -409,14 +409,14 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $sampleModel = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $now,
         ]);
 
         $sampleModel2 = TestModel::create([
             'first_name' => 'Tess',
-            'last_name' => 'Rowlett',
+            'last_name'  => 'Rowlett',
             'created_at' => $later,
             'updated_at' => $later,
         ]);
@@ -425,21 +425,21 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $desired = json_encode([
             [
-                'id' => 1,
+                'id'         => 1,
                 'first_name' => 'David',
-                'last_name' => 'Hemphill',
+                'last_name'  => 'Hemphill',
                 'created_at' => $now,
                 'updated_at' => $now,
-                'full_name' => 'David Lee Hemphill',
+                'full_name'  => 'David Lee Hemphill',
             ],
             [
-                'id' => 2,
+                'id'         => 2,
                 'first_name' => 'Tess',
-                'last_name' => 'Rowlett',
+                'last_name'  => 'Rowlett',
                 'created_at' => $later,
                 'updated_at' => $later,
-                'full_name' => 'Tess Lee Rowlett',
-            ]
+                'full_name'  => 'Tess Lee Rowlett',
+            ],
         ]);
 
         $this->assertEquals($desired, $users->toJson());
@@ -453,14 +453,14 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $sampleModel = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $now,
         ]);
 
         $sampleModel2 = TestModel::create([
             'first_name' => 'Tess',
-            'last_name' => 'Rowlett',
+            'last_name'  => 'Rowlett',
             'created_at' => $later,
             'updated_at' => $later,
         ]);
@@ -476,7 +476,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     {
         $sampleModel = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => '2015-10-14 12:00:00',
             'updated_at' => '2015-10-14 12:00:00',
         ]);
@@ -497,7 +497,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $sampleModel = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $now,
         ]);
@@ -506,7 +506,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
             ->present(HideAttributesPresenter::class);
 
         $desired = json_encode([
-            'id' => 1,
+            'id'        => 1,
             'full_name' => 'David Lee Hemphill',
         ]);
 
@@ -521,7 +521,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $sampleModel = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => $now,
             'updated_at' => $now,
         ]);
@@ -531,7 +531,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
 
         $desired = json_encode([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
         ]);
 
         $this->assertEquals($desired, (string) $presentedModel);
@@ -542,7 +542,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     {
         $sampleModel = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => '2015-10-14 12:00:00',
             'updated_at' => '2015-10-14 12:00:00',
         ]);
@@ -562,7 +562,7 @@ class PresenterTest extends PHPUnit_Framework_TestCase
     {
         $sampleModel = TestModel::create([
             'first_name' => 'David',
-            'last_name' => 'Hemphill',
+            'last_name'  => 'Hemphill',
             'created_at' => '2015-10-14 12:00:00',
             'updated_at' => '2015-10-14 12:00:00',
         ]);
@@ -602,7 +602,7 @@ class HideAttributesPresenter extends Presenter
 
     public function getFullNameAttribute()
     {
-        return $this->model->first_name . ' Lee ' . $this->model->last_name;
+        return $this->model->first_name.' Lee '.$this->model->last_name;
     }
 }
 
@@ -612,7 +612,7 @@ class ShowAttributesPresenter extends Presenter
 
     public function getFullNameAttribute()
     {
-        return $this->model->first_name . ' Lee ' . $this->model->last_name;
+        return $this->model->first_name.' Lee '.$this->model->last_name;
     }
 }
 
@@ -625,12 +625,12 @@ class SamplePresenter extends Presenter
 
     public function name()
     {
-        return $this->model->first_name . ' ' . $this->model->last_name;
+        return $this->model->first_name.' '.$this->model->last_name;
     }
 
     public function getFullNameAttribute()
     {
-        return $this->model->first_name . ' Lee ' . $this->model->last_name;
+        return $this->model->first_name.' Lee '.$this->model->last_name;
     }
 }
 
