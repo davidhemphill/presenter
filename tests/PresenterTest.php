@@ -5,7 +5,6 @@ namespace Hemp\Tests\Presentable;
 use Hemp\Presenter\Presenter;
 use Hemp\Presenter\Presentable;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
 use Illuminate\Support\Collection;
 use Hemp\Presenter\PresenterFactory;
 use Illuminate\Database\Eloquent\Model;
