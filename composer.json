@@ -5,11 +5,11 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "illuminate/support": "~5.1|~5.2|~5.3|~5.4|~5.5|~5.6"
+        "illuminate/support": "~5.1|~5.2|~5.3|~5.4|~5.5|~5.6",
+        "phpunit/phpunit": "^7.5"
     },
     "require-dev": {
         "mockery/mockery": "^1.0@dev",
-        "phpunit/phpunit": "~4.0",
         "illuminate/database": "~5.1|~5.2|~5.3|~5.4|~5.5|~5.6",
         "graham-campbell/testbench-core": "^1.1",
         "graham-campbell/testbench": "^3.2"
@@ -18,9 +18,7 @@
         "psr-4": {
             "Hemp\\Presenter\\": "src"
         },
-        "files": [
-            "helpers.php"
-        ]
+        "files": ["helpers.php"]
     },
     "autoload-dev": {
         "psr-4": {
@@ -32,9 +30,7 @@
     },
     "extra": {
         "laravel": {
-            "providers": [
-                "Hemp\\Presenter\\PresenterServiceProvider"
-            ]
+            "providers": ["Hemp\\Presenter\\PresenterServiceProvider"]
         }
     }
 }
