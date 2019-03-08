@@ -6,5 +6,4 @@ use Hemp\Presenter\Presenter;
 
 class UserProfilePresenter extends Presenter
 {
-
 }
