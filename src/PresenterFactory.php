@@ -15,7 +15,8 @@ class PresenterFactory
     {
         if ($presenter instanceof \Closure) {
             return new class($presenter($model)) {
-                public function __construct($attributes) {
+                public function __construct($attributes)
+                {
                     $this->attributes = $attributes;
                 }
 

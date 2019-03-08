@@ -10,7 +10,7 @@ abstract class Presenter
     /**
      * Whether to snake case the attributes.
      *
-     * @var boolean
+     * @var bool
      */
     public $snakeCaseAttributes = true;
 
@@ -54,7 +54,7 @@ abstract class Presenter
     {
         $method = $this->getStudlyAttributeMethod($attribute);
 
-        // If the magic getter exists on this Presenter, let's call it and return the value, 
+        // If the magic getter exists on this Presenter, let's call it and return the value,
         // passing in the original model instance, so the user can mutate it first.
         if (method_exists($this, $method)) {
             return $this->{$method}($this->model);
@@ -76,7 +76,7 @@ abstract class Presenter
 
     /**
      * Convert the Presenter to a JSON string.
-     * 
+     *
      * @return string
      */
     public function toJson($options = 0)
@@ -94,26 +94,27 @@ abstract class Presenter
         $modelArray = $this->model->toArray();
 
         return $this->processKeys(array_merge(
-            $modelArray, 
+            $modelArray,
             $this->mutatedAttributes()
         ));
     }
 
     /**
      * Return the mutated attributes for the Presenter.
-     * 
+     *
      * @return array
      */
     protected function mutatedAttributes()
     {
         return collect($this->mutatableAttributes())->mapWithKeys(function ($attribute) {
             $attributeKey = $this->snakeCaseAttributes ? lcfirst(Str::snake($attribute)) : lcfirst(Str::camel($attribute));
+
             return [$attributeKey => $this->mutateAttribute($attribute)];
         })->all();
     }
 
     /**
-     * Return the mutable attributes for the Presenter;
+     * Return the mutable attributes for the Presenter;.
      *
      * @return array
      */
@@ -166,7 +167,7 @@ abstract class Presenter
     {
         return collect($attributes)->mapWithKeys(function ($value, $key) {
             return [
-                lcfirst($this->snakeCaseAttributes ? Str::snake($key) : Str::camel($key)) => $value
+                lcfirst($this->snakeCaseAttributes ? Str::snake($key) : Str::camel($key)) => $value,
             ];
         })->all();
     }
