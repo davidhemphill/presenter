@@ -6,9 +6,8 @@ The idea for this package is explained in this post: [Presenters in Laravel](htt
 
 ### Key differences with other presenter packages
 
-- Supports multiple decorators/presenters
 - Decorated models can still be converted to JSON/array with `toJson` and `toArray` or by simply returning it from a controller
-- Supports mutators/magic getters like the ones used in Eloquent (e.g. getFullNameAttribute())
+- Supports accessors/magic getters like the ones used in Eloquent (e.g. `getFullNameAttribute`)
 
 ## Installation
 
@@ -27,6 +26,8 @@ Presenter adds a `present` Collection macro whichs allows you to present a group
     Hemp\Presenter\PresenterServiceProvider::class,
 ],
 ```
+
+In Laravel 5.5+, the `PresenterServiceProvider` should be auto-discovered, so you won't need to register it.
 
 ## Create a `Presenter`
 
