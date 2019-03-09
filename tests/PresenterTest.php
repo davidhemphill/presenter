@@ -8,7 +8,9 @@ use Illuminate\Support\Carbon;
 use Hemp\Presenter\Tests\Fixtures\User;
 use Hemp\Presenter\Tests\Fixtures\UserProfilePresenter;
 use Hemp\Presenter\Tests\Fixtures\UserWithDefaultPresenter;
+use Hemp\Presenter\Tests\Fixtures\HiddenAttributesPresenter;
 use Hemp\Presenter\Tests\Fixtures\CamelCaseAttributesPresenter;
+use Hemp\Presenter\Tests\Fixtures\HiddenAndVisibleAttributesPresenter;
 
 class PresenterTest extends IntegrationTest
 {
@@ -16,8 +18,7 @@ class PresenterTest extends IntegrationTest
     public function you_can_get_the_original_model()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter {
-        };
+        $presenter = new class($user) extends Presenter {};
         $this->assertSame($user, $presenter->getModel());
     }
 
@@ -26,8 +27,7 @@ class PresenterTest extends IntegrationTest
     {
         $user = factory(User::class)->create();
         $presenter = new class($user) extends Presenter {
-            public function middleName()
-            {
+            function middleName() {
                 return 'Isles';
             }
         };
@@ -39,8 +39,7 @@ class PresenterTest extends IntegrationTest
     public function it_delegates_undefined_method_calls_to_the_underlying_model_instance()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter {
-        };
+        $presenter = new class($user) extends Presenter {};
         $this->assertEquals('Hello from the Model!', $presenter->sayHello());
     }
 
@@ -49,7 +48,7 @@ class PresenterTest extends IntegrationTest
     {
         $user = factory(User::class)->create();
         $presenter = new class($user) extends Presenter {
-            public function getSayHelloAttribute()
+            function getSayHelloAttribute()
             {
                 return 'Hello from the Presenter!';
             }
@@ -170,7 +169,7 @@ class PresenterTest extends IntegrationTest
         $user = factory(UserWithDefaultPresenter::class)->create()->present();
         $this->assertInstanceOf(UserProfilePresenter::class, $user);
     }
-
+    
     /** @test */
     public function it_throws_if_theres_no_default_presenter_and_none_is_passed_in()
     {
@@ -205,26 +204,6 @@ class PresenterTest extends IntegrationTest
             $this->assertInstanceOf(UserProfilePresenter::class, $user);
         });
     }
-
-    /** @test */
-    // public function you_can_access_a_collection_of_eloquent_models()
-    // {
-    // $user = factory(User::class)->create(['name' => 'David Hemphill']);
-    // $users = collect([$user])->present(UserProfilePresenter::class);
-
-    // $this->fail("I'm not sure why this test is here.");
-    // dd($users->first()->pluck('name'));
-    // dd($users);
-    // dd($users->pluck('name'));
-    // $this->assertEquals(
-    // collect(['David']),
-    // $users->pluck('name')
-    // );
-
-    // $this->assertEquals(
-    //     collect(['David Lee Hemphill']),
-    //     $users->pluck('full_name'));
-    // }
 
     /** @test */
     public function you_can_present_a_collection_of_models_using_a_closure()
@@ -267,7 +246,7 @@ class PresenterTest extends IntegrationTest
         $response = $this
             ->withoutExceptionHandling()
             ->json('GET', '/users')
-            ->assertOk()
+            ->assertOk() 
             ->assertHeader('Content-Type', 'application/json');
 
         $this->assertEquals('David Hemphill', $response->original[0]->full_name);
@@ -282,33 +261,78 @@ class PresenterTest extends IntegrationTest
         $response = $this
             ->withoutExceptionHandling()
             ->json('GET', '/paginated?page=2')
-            ->assertOk()
+            ->assertOk() 
             ->assertHeader('Content-Type', 'application/json');
 
         $this->assertEquals('Taylor Otwell', $response->original[0]->full_name);
     }
 
     /** @test */
-    public function a_presenter_can_specify_attributes_to_hide_from_json_or_array_output()
+    public function a_presenter_removes_hidden_model_attributes_from_output()
     {
-        $this->fail('Not implemented');
+        $presenter = factory(User::class)
+            ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
+            ->present(HiddenAttributesPresenter::class);
+        
+        $this->assertEquals([
+            'name' => 'David Hemphill',
+            'email' => 'david@laravel.com'
+        ], $presenter->toArray());
     }
 
     /** @test */
-    public function a_presenter_can_specify_attributes_to_show_in_json_or_array_output()
+    public function a_presenter_removes_hidden_attributes_and_leaves_visible_model_attributes_from_output()
     {
-        $this->fail('Not implemented');
+        $presenter = factory(User::class)
+            ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
+            ->present(HiddenAndVisibleAttributesPresenter::class);
+        
+        $this->assertEquals([
+            'name' => 'David Hemphill',
+        ], $presenter->toArray());
+    }
+
+    /** @test */
+    public function it_supports_offset_exists_via_array_access()
+    {
+        $presenter = factory(User::class)
+            ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
+            ->present(HiddenAndVisibleAttributesPresenter::class);
+        
+        $this->assertTrue(isset($presenter['name']));
     }
 
     /** @test */
     public function it_can_be_array_accessed()
     {
-        $this->fail('Not implemented');
+        $presenter = factory(User::class)
+            ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
+            ->present(UserProfilePresenter::class);
+        
+        $this->assertEquals('David Hemphill', $presenter['name']);
     }
 
     /** @test */
     public function it_cannot_be_written_to_via_array_access()
     {
-        $this->fail('Not implemented');
+        $this->expectException(BadMethodCallException::class);
+
+        $presenter = factory(User::class)
+            ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
+            ->present(HiddenAndVisibleAttributesPresenter::class);
+
+        $presenter['email'] = 'david@monarkee.com';
+    }
+
+    /** @test */
+    public function output_keys_cannot_be_unset_via_array_access()
+    {
+        $this->expectException(BadMethodCallException::class);
+
+        $presenter = factory(User::class)
+            ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
+            ->present(HiddenAndVisibleAttributesPresenter::class);
+
+        unset($presenter['email']);
     }
 }

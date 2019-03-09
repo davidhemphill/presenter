@@ -2,10 +2,15 @@
 
 namespace Hemp\Presenter;
 
+use ArrayAccess;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Contracts\Support\Arrayable;
+use Mockery\Exception\BadMethodCallException;
 
-abstract class Presenter
+abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
 {
     /**
      * Whether to snake case the attributes.
@@ -22,6 +27,20 @@ abstract class Presenter
     public $model;
 
     /**
+     * The hidden attributes on the Presenter.
+     *
+     * @var array
+     */
+    public $hidden = [];
+
+    /**
+     * The visible attributes on the Presenter.
+     *
+     * @var array
+     */
+    public $visible = [];
+
+    /**
      * Create a new Presenter instance.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
@@ -29,6 +48,18 @@ abstract class Presenter
     public function __construct(Model $model)
     {
         $this->model = $model;
+    }
+
+    /**
+     * Return the keys for the presented model and cache the value.
+     *
+     * @return array
+     */
+    protected function modelKeys()
+    {
+        return once(function () {
+            return array_keys($this->model->toArray());
+        });
     }
 
     /**
@@ -91,12 +122,39 @@ abstract class Presenter
      */
     public function toArray()
     {
-        $modelArray = $this->model->toArray();
+        return $this->processKeys(
+            array_merge(
+                $this->removeHiddenAttributes($this->model->toArray()),
+                $this->mutatedAttributes()
+            )
+        );
+    }
 
-        return $this->processKeys(array_merge(
-            $modelArray,
-            $this->mutatedAttributes()
-        ));
+    /**
+     * Remove the non-visible attributes from the output.
+     *
+     * @param array $array
+     * @return array
+     */
+    protected function removeHiddenAttributes($attributes)
+    {
+        return Arr::only($attributes, $this->visibleAttributes());
+    }
+
+    /**
+     * Determine the visible attributes for the Presenter, taking into account the key might exist
+     * in both the `hidden` and `visible` arrays. If a key is found in both, then let's assume
+     * it is `visible`. 
+     *
+     * @return void
+     */
+    public function visibleAttributes()
+    {
+        if (empty($this->visible)) {
+            return array_flip(Arr::except(array_flip($this->modelKeys()), $this->hidden));
+        }
+
+        return Arr::only($this->modelKeys(), array_flip($this->visible));
     }
 
     /**
@@ -123,9 +181,11 @@ abstract class Presenter
         $mutatable = [];
 
         $classMethods = get_class_methods(static::class);
+        $attributeMethods = implode(';', $classMethods);
+        preg_match_all('/(?<=^|;)get([^;]+?)Attribute(;|$)/', $attributeMethods, $matches);
 
-        if (preg_match_all('/(?<=^|;)get([^;]+?)Attribute(;|$)/', implode(';', $classMethods), $matches)) {
-            foreach ($matches[1] as $match) {
+        if ($matches) {
+            foreach($matches[1] as $match) {
                 $mutatable[] = lcfirst(Str::snake($match));
             }
         }
@@ -171,4 +231,46 @@ abstract class Presenter
             ];
         })->all();
     }
+
+    /**
+     * Determine if the given offset exists on the Presenter.
+     *
+     * @param string $offset
+     * @return bool
+     */
+    public function offsetExists($offset) {
+        return $this->{$offset} !== null;
+    }
+
+    /**
+     * Retrieve the value at the given offset.
+     *
+     * @param string $offset
+     * @return mixed
+     */
+    public function offsetGet($offset) {
+        return $this->{$offset};
+    }
+
+    /**
+     * Set the value at the given offset.
+     *
+     * @param string $offset
+     * @param string $value
+     * @throws BadMethodCallException
+     */
+    public function offsetSet($offset, $value) {
+        throw new BadMethodCallException("Hemp/Presenter does not support write methods");
+    }
+
+    /**
+     * Unset the value at the given offset.
+     *
+     * @param string $offset
+     * @throws BadMethodCallException
+     */
+    public function offsetUnset($offset) {
+        throw new BadMethodCallException("Hemp/Presenter does not support write methods");
+    }
+
 }
