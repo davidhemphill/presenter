@@ -144,7 +144,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Determine the visible attributes for the Presenter, taking into account the key might exist
      * in both the `hidden` and `visible` arrays. If a key is found in both, then let's assume
-     * it is `visible`. 
+     * it is `visible`.
      *
      * @return void
      */
@@ -185,7 +185,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
         preg_match_all('/(?<=^|;)get([^;]+?)Attribute(;|$)/', $attributeMethods, $matches);
 
         if ($matches) {
-            foreach($matches[1] as $match) {
+            foreach ($matches[1] as $match) {
                 $mutatable[] = lcfirst(Str::snake($match));
             }
         }
@@ -238,7 +238,8 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      * @param string $offset
      * @return bool
      */
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return $this->{$offset} !== null;
     }
 
@@ -248,7 +249,8 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      * @param string $offset
      * @return mixed
      */
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return $this->{$offset};
     }
 
@@ -259,8 +261,9 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      * @param string $value
      * @throws BadMethodCallException
      */
-    public function offsetSet($offset, $value) {
-        throw new BadMethodCallException("Hemp/Presenter does not support write methods");
+    public function offsetSet($offset, $value)
+    {
+        throw new BadMethodCallException('Hemp/Presenter does not support write methods');
     }
 
     /**
@@ -269,8 +272,8 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      * @param string $offset
      * @throws BadMethodCallException
      */
-    public function offsetUnset($offset) {
-        throw new BadMethodCallException("Hemp/Presenter does not support write methods");
+    public function offsetUnset($offset)
+    {
+        throw new BadMethodCallException('Hemp/Presenter does not support write methods');
     }
-
 }

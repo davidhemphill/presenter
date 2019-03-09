@@ -18,7 +18,8 @@ class PresenterTest extends IntegrationTest
     public function you_can_get_the_original_model()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter {};
+        $presenter = new class($user) extends Presenter {
+        };
         $this->assertSame($user, $presenter->getModel());
     }
 
@@ -27,7 +28,8 @@ class PresenterTest extends IntegrationTest
     {
         $user = factory(User::class)->create();
         $presenter = new class($user) extends Presenter {
-            function middleName() {
+            public function middleName()
+            {
                 return 'Isles';
             }
         };
@@ -39,7 +41,8 @@ class PresenterTest extends IntegrationTest
     public function it_delegates_undefined_method_calls_to_the_underlying_model_instance()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter {};
+        $presenter = new class($user) extends Presenter {
+        };
         $this->assertEquals('Hello from the Model!', $presenter->sayHello());
     }
 
@@ -48,7 +51,7 @@ class PresenterTest extends IntegrationTest
     {
         $user = factory(User::class)->create();
         $presenter = new class($user) extends Presenter {
-            function getSayHelloAttribute()
+            public function getSayHelloAttribute()
             {
                 return 'Hello from the Presenter!';
             }
@@ -169,7 +172,7 @@ class PresenterTest extends IntegrationTest
         $user = factory(UserWithDefaultPresenter::class)->create()->present();
         $this->assertInstanceOf(UserProfilePresenter::class, $user);
     }
-    
+
     /** @test */
     public function it_throws_if_theres_no_default_presenter_and_none_is_passed_in()
     {
@@ -246,7 +249,7 @@ class PresenterTest extends IntegrationTest
         $response = $this
             ->withoutExceptionHandling()
             ->json('GET', '/users')
-            ->assertOk() 
+            ->assertOk()
             ->assertHeader('Content-Type', 'application/json');
 
         $this->assertEquals('David Hemphill', $response->original[0]->full_name);
@@ -261,7 +264,7 @@ class PresenterTest extends IntegrationTest
         $response = $this
             ->withoutExceptionHandling()
             ->json('GET', '/paginated?page=2')
-            ->assertOk() 
+            ->assertOk()
             ->assertHeader('Content-Type', 'application/json');
 
         $this->assertEquals('Taylor Otwell', $response->original[0]->full_name);
@@ -273,10 +276,10 @@ class PresenterTest extends IntegrationTest
         $presenter = factory(User::class)
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(HiddenAttributesPresenter::class);
-        
+
         $this->assertEquals([
             'name' => 'David Hemphill',
-            'email' => 'david@laravel.com'
+            'email' => 'david@laravel.com',
         ], $presenter->toArray());
     }
 
@@ -286,7 +289,7 @@ class PresenterTest extends IntegrationTest
         $presenter = factory(User::class)
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(HiddenAndVisibleAttributesPresenter::class);
-        
+
         $this->assertEquals([
             'name' => 'David Hemphill',
         ], $presenter->toArray());
@@ -298,7 +301,7 @@ class PresenterTest extends IntegrationTest
         $presenter = factory(User::class)
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(HiddenAndVisibleAttributesPresenter::class);
-        
+
         $this->assertTrue(isset($presenter['name']));
     }
 
@@ -308,7 +311,7 @@ class PresenterTest extends IntegrationTest
         $presenter = factory(User::class)
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(UserProfilePresenter::class);
-        
+
         $this->assertEquals('David Hemphill', $presenter['name']);
     }
 
