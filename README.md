@@ -24,7 +24,7 @@ Then register the Service Provider by adding it to the `providers` array in `con
 ],
 ```
 
-**Note** In Laravel 5.5+, the `PresenterServiceProvider` should be auto-discovered, so you won't need to register it.
+**Note**: In Laravel 5.5+, the `PresenterServiceProvider` should be auto-discovered, so you won't need to register it.
 
 ## Creating `Presenter` Classes
 
@@ -207,7 +207,7 @@ class ApiPresenter extends Presenter
 }
 ```
 
-**Note** If a key is specified in both the `hidden` and `visible` properties, then it will be assumed that you want it to be visible in the rendered output.
+**Note**: If a key is specified in both the `hidden` and `visible` properties, then it will be assumed that you want it to be visible in the rendered output.
 
 ## Support
 
