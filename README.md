@@ -50,12 +50,12 @@ use Hemp\Presenter\Presenter;
 class ApiPresenter extends Presenter
 {
     public function createdDate() {
-        return $this->model->created_at->format('n/j/Y');
+        return $this->created_at->format('n/j/Y');
     }
 
     public function getFullNameAttribute()
     {
-        return trim($this->model->first_name . ' ' . $this->model->last_name);
+        return trim($this->first_name . ' ' . $this->last_name);
     }
 }
 ```
