@@ -138,7 +138,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
         return $this->processKeys(
             array_merge(
                 $this->removeHiddenAttributes($this->model->toArray()),
-                $this->mutatedAttributes()
+                $this->additionalAttributes()
             )
         );
     }
@@ -171,13 +171,13 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     }
 
     /**
-     * Return the mutated attributes for the Presenter.
+     * Return the additional attributes for the Presenter.
      *
      * @return array
      */
-    protected function mutatedAttributes()
+    protected function additionalAttributes()
     {
-        return collect($this->mutatableAttributes())->mapWithKeys(function ($attribute) {
+        return collect($this->availableAttributes())->mapWithKeys(function ($attribute) {
             $attributeKey = $this->snakeCaseAttributes ? lcfirst(Str::snake($attribute)) : lcfirst(Str::camel($attribute));
 
             return [$attributeKey => $this->mutateAttribute($attribute)];
@@ -189,21 +189,25 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      *
      * @return array
      */
-    protected function mutatableAttributes()
+    protected function availableAttributes()
     {
-        $mutatable = [];
+        return collect($this->getAttributeMatches())->map(function ($attribute) {
+            return lcfirst(Str::snake($attribute));
+        });
+    }
 
-        $classMethods = get_class_methods(static::class);
-        $attributeMethods = implode(';', $classMethods);
-        preg_match_all('/(?<=^|;)get([^;]+?)Attribute(;|$)/', $attributeMethods, $matches);
+    /**
+     * Get any attributes with accessors defined on the Presenter.
+     *
+     * @return array
+     */
+    protected function getAttributeMatches()
+    {
+        return with(implode(';', get_class_methods(static::class)), function ($attributeMethods) {
+            preg_match_all('/(?<=^|;)get([^;]+?)Attribute(;|$)/', $attributeMethods, $matches);
 
-        if ($matches) {
-            foreach ($matches[1] as $match) {
-                $mutatable[] = lcfirst(Str::snake($match));
-            }
-        }
-
-        return $mutatable;
+            return $matches[1];
+        });
     }
 
     /**
