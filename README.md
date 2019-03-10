@@ -1,4 +1,4 @@
-# Hemp Presenter
+# 🌿 Hemp Presenter
 
 [![Codeship Status for davidhemphill/presenter](https://app.codeship.com/projects/2ef68e40-fcaa-0136-86ee-2eee2779cdfb/status?branch=rewrite)](https://app.codeship.com/projects/322407)
 
