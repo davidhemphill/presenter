@@ -69,9 +69,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      */
     protected function modelKeys()
     {
-        return once(function () {
-            return array_keys($this->model->toArray());
-        });
+        return array_keys($this->model->toArray());
     }
 
     /**
