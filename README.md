@@ -60,7 +60,9 @@ class ApiPresenter extends Presenter
 }
 ```
 
-This class has a custom method `createdDate` that can be called wherever this `Presenter` is used. It also has a magic accessor `getFullNameAttribute` that will be accessible via the `Presenter` like so: `$user->full_name`. This works exactly like Eloquent's magic accessors...when the `Presenter` is serialized into a response (like for a view or API response), these magic accessors will be called an added to the rendered output.
+This class has a custom method `createdDate` that can be called wherever this `Presenter` is used. It also has a magic accessor `getFullNameAttribute` that will be accessible via the `Presenter` like so: `$user->full_name`. This works exactly like Eloquent's magic accessors...when the `Presenter` is serialized into a response (like for a view or API response), these magic accessors will be called an added to the rendered output. 
+
+You'll notice we're calling `$this->first_name` and `$this->last_name`. These are not available on the `Presenter` class itself, but are being delegated to the underlying `Model` instance.
 
 This `Presenter` might output something like this:
 
