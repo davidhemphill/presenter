@@ -6,7 +6,7 @@ use Hemp\Presenter\Presenter;
 
 class CamelCaseAttributesPresenter extends Presenter
 {
-    public $snakeCaseAttributes = false;
+    public $snakeCase = false;
 
     public function getFirstNameAttribute()
     {

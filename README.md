@@ -15,7 +15,7 @@ Install the package via [Composer](https://getcomposer.org/):
 composer require hemp/presenter
 ```
 
-Then register the Service Provider by adding it to the `providers` array in `config/app.php`:
+In Laravel 5.5+, the package's service provider should be auto-discovered, so you won't need to register it. If for some reason you need to register it manually you can do so by adding it to the `providers` array in `config/app.php`:
 
 ```php
 'providers' => [
@@ -23,8 +23,6 @@ Then register the Service Provider by adding it to the `providers` array in `con
     Hemp\Presenter\PresenterServiceProvider::class,
 ],
 ```
-
-**Note**: In Laravel 5.5+, the `PresenterServiceProvider` should be auto-discovered, so you won't need to register it.
 
 ## Creating `Presenter` Classes
 
@@ -89,12 +87,12 @@ Or use the methods available on the `Presenter` itself:
 $presentedUser->createdAt();
 ```
 
-When outputting the `Presenter` to and `array` or JSON, if you'd like each of the rendered attributes to use `camelCase` formatting instead of the default `snake_case` formatting, you can set the `snakeCase` property on your `Presenter` to `false`:
+When outputting the `Presenter` to an `array` or JSON, if you'd like each of the rendered attributes to use `camelCase` formatting instead of the default `snake_case` formatting, you can set the `snakeCase` property on your `Presenter` to `false`:
 
 ```php
 class ApiPresenter extends Presenter
 {
-    public $snakeCaseAttributes = false;
+    public $snakeCase = false;
 }
 ```
 
