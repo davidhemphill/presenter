@@ -29,7 +29,7 @@ class PresenterServiceProvider extends ServiceProvider
     public function register()
     {
         $this->commands([
-            MakePresenterCommand::class
+            MakePresenterCommand::class,
         ]);
     }
 }
