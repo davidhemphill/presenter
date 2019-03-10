@@ -1,6 +1,6 @@
 # Hemp Presenter
 
-[![Codeship Status for davidhemphill/presenter](https://app.codeship.com/projects/2ef68e40-fcaa-0136-86ee-2eee2779cdfb/status?branch=master)](https://app.codeship.com/projects/322407)
+[![Codeship Status for davidhemphill/presenter](https://app.codeship.com/projects/2ef68e40-fcaa-0136-86ee-2eee2779cdfb/status?branch=rewrite)](https://app.codeship.com/projects/322407)
 
 This package makes it fast, fun, and profitable to decorate your Eloquent models for presentation in views, PDFs, CSV files, or anywhere else in your project.
 
