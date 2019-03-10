@@ -186,11 +186,11 @@ use Hemp\Presenter\Presenter;
 
 class ApiPresenter extends Presenter
 {
-    protected $hidden = ['first_name', 'last_name'];
+    protected $hidden = ['stripe_private_key'];
 }
 ```
 
-This will keep the underlying `Model` instance's `first_name` and `last_name` attributes from showing in the final output.
+This will keep the underlying `Model` instance's `stripe_private_key` attributes from showing in the final output.
 
 You may also specify the `visible` property on the `Presenter` to act as a whitelist of attributes that should be shown in the output. 
 
@@ -203,7 +203,7 @@ use Hemp\Presenter\Presenter;
 
 class ApiPresenter extends Presenter
 {
-    protected $visible = ['stripe_private_key'];
+    protected $visible = ['name', 'email'];
 }
 ```
 
