@@ -54,12 +54,23 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      * Create a new Presenter instance.
      *
      * @param Model $model
-     * @param \Hemp\Presenter\Presenter $presenter
+     * @param \Hemp\Presenter\Presenter|null $presenter
      * @return void
      */
-    public static function make(Model $model, $presenter)
+    public static function make(Model $model, $presenter = null)
     {
-        return (new PresenterFactory)($model, $presenter);
+        return (new PresenterFactory)($model, $presenter ?? static::class);
+    }
+
+    /**
+     * Return a collection of presented models.
+     *
+     * @param array|\Illuminate\Support\Collection $models
+     * @return \Illuminate\Support\Collection
+     */
+    public static function collection($models, $presenter = null)
+    {
+        return collect($models)->present($presenter ?? static::class);
     }
 
     /**

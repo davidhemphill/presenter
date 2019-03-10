@@ -51,13 +51,20 @@ class ApiPresenter extends Presenter
 }
 ```
 
-## Usage
+## Presenting Single Models
 
 Use the `make` factory method of the `Presenter` class:
 
 ```php
 $user = User::first();
 $presentedUser = Presenter::make($user, ApiPresenter::class);
+```
+
+You can also call the `make` method on any of your custom `Presenter` classes, without passing the second argument:
+
+```php
+$user = User::first();
+$presentedUser = ApiPresenter::make($user);
 ```
 
 Use the `present` helper:
@@ -77,6 +84,22 @@ Or, when using the `Presentable` trait, specify a default presenter using the `d
 
 ```php
 $presentedUser = User::first()->present();
+```
+
+## Presenting Collections
+
+You can use the static `collection` method on the `Presenter` class to present an array of `Model` objects:
+
+```php
+$users = User::all();
+$presenter = Presenter::collection($users, ApiPresenter::class);
+```
+
+You can also use the static `collection` method on any of your custom `Presenter` classes directly without a second argument:
+
+```php
+$users = User::all();
+$presenter = ApiPresenter::collection($users);
 ```
 
 Use the `present` macro on a Collection object:
