@@ -71,7 +71,7 @@ This `Presenter` might output something like this:
     "last_name": "Hemphill",
     "created_at": "2016-10-14 12:00:00",
     "updated_at": "2016-12-14 12:00:00",
-    "full_name": "David Lee Hemphill" /* The magic accessor */
+    "full_name": "David Lee Hemphill" // The magic accessor
 }
 ```
 
