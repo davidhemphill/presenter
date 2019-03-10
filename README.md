@@ -64,7 +64,7 @@ This class has a custom method `createdDate` that can be called wherever this `P
 
 This `Presenter` might output something like this:
 
-```json
+```json5
 {
     "id": 1, 
     "first_name": "David",
