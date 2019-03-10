@@ -38,7 +38,7 @@ This will generate an empty `Presenter` class inside of `app/Presenters`.
 
 ## Customizing `Presenter` Classes
 
-At their core, presenters are simple classes designed to encapsulate complex or repetitive view logic. What makes `hemp/presenter` nice is it allows you to attach methods and magic accessors to these `Presenter` objects. For example, take this `ApiPresenter` class:
+At their core, presenters are simple classes designed to encapsulate complex or repetitive view logic. What makes `hemp/presenter` nice is it allows you to attach magic accessors to these `Presenter` objects all the while allowing for the typical serialization workflow of using regular `Model` objects and collections. For example, take this `ApiPresenter` class:
 
 ```php
 <?php
@@ -60,7 +60,7 @@ class ApiPresenter extends Presenter
 }
 ```
 
-This class has a custom method (`createdDate`) that can be called wherever this `Presenter` is used. It also has a magic accessor `getFullNameAttribute` that will be accessible via the `Presenter` like so: `$user->full_name`. This works exactly like Eloquent's magic accessors...when the `Presenter` is serialized into a response (like for a view or API response), these magic accessors will be called an added to the rendered output.
+This class has a custom method `createdDate` that can be called wherever this `Presenter` is used. It also has a magic accessor `getFullNameAttribute` that will be accessible via the `Presenter` like so: `$user->full_name`. This works exactly like Eloquent's magic accessors...when the `Presenter` is serialized into a response (like for a view or API response), these magic accessors will be called an added to the rendered output.
 
 This `Presenter` might output something like this:
 
@@ -71,7 +71,7 @@ This `Presenter` might output something like this:
     "last_name": "Hemphill",
     "created_at": "2016-10-14 12:00:00",
     "updated_at": "2016-12-14 12:00:00",
-    "full_name": "David Lee Hemphill" // The magic accessor
+    "full_name": "David Lee Hemphill" /* The magic accessor */
 }
 ```
 
@@ -92,7 +92,7 @@ When outputting the `Presenter` to and `array` or JSON, if you'd like each of th
 ```php
 class ApiPresenter extends Presenter
 {
-    public $snakeCase = false;
+    public $snakeCaseAttributes = false;
 }
 ```
 
@@ -140,7 +140,7 @@ Or you can use the `Presentable` trait on your `Model`. This will allow you to c
 $presentedUser = User::first()->present(ApiPresenter::class);
 ```
 
-Also, when using the `Presentable` trait, you can specify a default presenter using the `defaultPresenter` attribute on the Model and call `present` to use it:
+Also, when using the `Presentable` trait, you can specify a default presenter using the `defaultPresenter` attribute on the `Model` and then calling `present`:
 
 ```php
 class User extends \Illuminate\Database\Eloquent\Model
@@ -203,7 +203,7 @@ use Hemp\Presenter\Presenter;
 
 class ApiPresenter extends Presenter
 {
-    protected $visible = ['subscribed'];
+    protected $visible = ['stripe_private_key'];
 }
 ```
 
