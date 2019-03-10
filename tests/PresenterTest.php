@@ -5,6 +5,7 @@ namespace Hemp\Presenter\Tests;
 use BadMethodCallException;
 use Hemp\Presenter\Presenter;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Hemp\Presenter\Tests\Fixtures\User;
 use Hemp\Presenter\Tests\Fixtures\UserProfilePresenter;
 use Hemp\Presenter\Tests\Fixtures\UserWithDefaultPresenter;
@@ -228,6 +229,37 @@ class PresenterTest extends IntegrationTest
         $presenter = Presenter::make($user, UserProfilePresenter::class);
 
         $this->assertInstanceOf(UserProfilePresenter::class, $presenter);
+    }
+
+    /** @test */
+    public function you_can_call_make_on_the_presenter_itself()
+    {
+        $user = factory(User::class)->create(['name' => 'David Hemphill']);
+        $presenter = UserProfilePresenter::make($user);
+
+        $this->assertInstanceOf(UserProfilePresenter::class, $presenter);
+    }
+
+    /** @test */
+    public function you_can_present_a_collection_of_models_using_collection_method()
+    {
+        $user1 = factory(User::class)->create(['name' => 'David Hemphill']);
+        $user2 = factory(User::class)->create(['name' => 'David Hemphill']);
+
+        $collection = Presenter::collection([$user1, $user2], UserProfilePresenter::class);
+
+        $this->assertInstanceOf(Collection::class, $collection);
+    }
+
+    /** @test */
+    public function you_can_present_a_collection_of_models_using_collection_method_on_the_presenter_itself()
+    {
+        $user1 = factory(User::class)->create(['name' => 'David Hemphill']);
+        $user2 = factory(User::class)->create(['name' => 'David Hemphill']);
+
+        $collection = UserProfilePresenter::collection([$user1, $user2]);
+
+        $this->assertInstanceOf(Collection::class, $collection);
     }
 
     /** @test */

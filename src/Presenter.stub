@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+use Hemp\Presenter\Presenter;
+
+class DummyClass extends Presenter
+{
+    
+}

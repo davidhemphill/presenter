@@ -17,7 +17,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      *
      * @var bool
      */
-    public $snakeCaseAttributes = true;
+    public $snakeCase = true;
 
     /**
      * The Model being presented.
@@ -186,7 +186,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     protected function additionalAttributes()
     {
         return collect($this->availableAttributes())->mapWithKeys(function ($attribute) {
-            $attributeKey = $this->snakeCaseAttributes ? lcfirst(Str::snake($attribute)) : lcfirst(Str::camel($attribute));
+            $attributeKey = $this->snakeCase ? lcfirst(Str::snake($attribute)) : lcfirst(Str::camel($attribute));
 
             return [$attributeKey => $this->mutateAttribute($attribute)];
         })->all();
@@ -252,7 +252,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     {
         return collect($attributes)->mapWithKeys(function ($value, $key) {
             return [
-                lcfirst($this->snakeCaseAttributes ? Str::snake($key) : Str::camel($key)) => $value,
+                lcfirst($this->snakeCase ? Str::snake($key) : Str::camel($key)) => $value,
             ];
         })->all();
     }

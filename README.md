@@ -1,35 +1,44 @@
 # Hemp Presenter
 
-This package makes it fast, fun, and profitable to decorate your Eloquent models for presentation in views, responses, pdfs, csv files, or anywhere you want.
+[![Codeship Status for davidhemphill/presenter](https://app.codeship.com/projects/2ef68e40-fcaa-0136-86ee-2eee2779cdfb/status?branch=master)](https://app.codeship.com/projects/322407)
 
-The idea for this package is explained in this post: [Presenters in Laravel](https://davidhemphill.com/presenters-in-laravel/).
+This package makes it fast, fun, and profitable to decorate your Eloquent models for presentation in views, PDFs, CSV files, or anywhere else in your project.
 
-### Key differences with other presenter packages
+For a little primer on the problems presenters solve, take a look at this article: [Presenters in Laravel](https://davidhemphill.com/presenters-in-laravel/).
 
-- Decorated models can still be converted to JSON/array with `toJson` and `toArray` or by simply returning it from a controller
-- Supports accessors/magic getters like the ones used in Eloquent (e.g. `getFullNameAttribute`)
 
 ## Installation
 
-Install the package via composer:
+Install the package via [Composer](https://getcomposer.org/):
 
 ```
 composer require hemp/presenter
 ```
 
-Presenter adds a `present` Collection macro whichs allows you to present a group of models. To use this, add the Service Provider to the `providers` array in `config/app.php`:
+Then register the Service Provider by adding it to the `providers` array in `config/app.php`:
 
 ```php
 'providers' => [
     // ...
-
     Hemp\Presenter\PresenterServiceProvider::class,
 ],
 ```
 
-In Laravel 5.5+, the `PresenterServiceProvider` should be auto-discovered, so you won't need to register it.
+**Note** In Laravel 5.5+, the `PresenterServiceProvider` should be auto-discovered, so you won't need to register it.
 
-## Create a `Presenter`
+## Creating `Presenter` Classes
+
+You can easily generate a `Presenter` class by calling the `make:presenter` Artisan command:
+
+```sh
+php artisan make:presenter ApiPresenter
+```
+
+This will generate an empty `Presenter` class inside of `app/Presenters`.
+
+## Customizing `Presenter` Classes
+
+At their core, `Presenter`s are simple classes designed to encapsulate complex or repetitive view logic. What makes `hemp/presenter` nice is it allows you to attach methods and magic accessors to these `Presenter` objects. For example, take this `ApiPresenter` class:
 
 ```php
 <?php
@@ -51,9 +60,60 @@ class ApiPresenter extends Presenter
 }
 ```
 
+This class has a custom method (`createdDate`) that can be called wherever this `Presenter` is used. It also has a magic accessor `getFullNameAttribute` that will be accessible via the `Presenter` like so: `$user->full_name`. This works exactly like Eloquent's magic accessors...when the `Presenter` is serialized into a response (like for a view or API response), these magic accessors will be called an added to the rendered output.
+
+This `Presenter` might output something like this:
+
+```json
+{
+    "id": 1, 
+    "first_name": "David",
+    "last_name": "Hemphill",
+    "created_at": "2016-10-14 12:00:00",
+    "updated_at": "2016-12-14 12:00:00",
+    "full_name": "David Lee Hemphill" // The magic accessor
+}
+```
+
+Once you have a presented model instance (like inside a Blade view), you can use magic accessors like this:
+
+```php
+$presentedUser->full_name;
+```
+
+Or use the methods available on the `Presenter` itself:
+
+```php
+$presentedUser->createdAt();
+```
+
+When outputting the `Presenter` to and `array` or JSON, if you'd like each of the rendered attributes to use `camelCase` formatting instead of the default `snake_case` formatting, you can set the `snakeCase` property on your `Presenter` to `false`:
+
+```php
+class ApiPresenter extends Presenter
+{
+    public $snakeCase = false;
+}
+```
+
+This will cause the rendered output to look like this:
+
+```json
+{
+    "id": 1, 
+    "firstName": "David",
+    "lastName": "Hemphill",
+    "createdAt": "2016-10-14 12:00:00",
+    "updatedAt": "2016-12-14 12:00:00",
+    "fullName": "David Lee Hemphill"
+}
+```
+
+You might like this option if your front-end JavaScript style guide uses mostly camelCased variables.
+
 ## Presenting Single Models
 
-Use the `make` factory method of the `Presenter` class:
+There are a number of different ways you can present your `Model` objects, depending on your personal preferences. For instance, you can use the `make` factory method of the `Presenter` class:
 
 ```php
 $user = User::first();
@@ -67,116 +127,55 @@ $user = User::first();
 $presentedUser = ApiPresenter::make($user);
 ```
 
-Use the `present` helper:
+You may also use the `present` global function, if that's your jam:
 
 ```php
 $user = User::first();
-$presentedUser = present($user, ApiPresenter::class);
+$presentedUser = present($user, ApiPresenter::class); 
 ```
 
-Or use the `Presentable` trait on your model and call `present` on it:
+Or you can use the `Presentable` trait on your `Model`. This will allow you to call `present` on it directly:
 
 ```php
 $presentedUser = User::first()->present(ApiPresenter::class);
 ```
 
-Or, when using the `Presentable` trait, specify a default presenter using the `defaultPresenter` attribute on the Model and call `present` to use it:
+Also, when using the `Presentable` trait, you can specify a default presenter using the `defaultPresenter` attribute on the Model and call `present` to use it:
 
 ```php
+class User extends \Illuminate\Database\Eloquent\Model
+{
+    public $defaultPresenter = App\Presenters\ApiPresenter::class,
+}
+
 $presentedUser = User::first()->present();
 ```
 
 ## Presenting Collections
 
-You can use the static `collection` method on the `Presenter` class to present an array of `Model` objects:
+You can also create a collection of presented `Model` objects. One way is to use the static `collection` method on the `Presenter` class to present an array of `Model` objects:
 
 ```php
 $users = User::all();
 $presenter = Presenter::collection($users, ApiPresenter::class);
 ```
 
-You can also use the static `collection` method on any of your custom `Presenter` classes directly without a second argument:
+You can also use the static `collection` method on any of your custom `Presenter` classes directly without passing the second argument:
 
 ```php
 $users = User::all();
 $presenter = ApiPresenter::collection($users);
 ```
 
-Use the `present` macro on a Collection object:
+You may also use the `present` macro on a Collection object:
 
 ```php
 $presentedUsers = User::all()->present(ApiPresenter::class);
 ```
 
-Once you have a presented model instance, you can use magic getters like this:
+## Hiding Model Attributes From Output
 
-```php
-$presentedUser->full_name;
-```
-
-Or use regular old methods:
-
-```php
-$presentedUser->createdAt();
-```
-
-## Converting Presenters to JSON
-
-Individual instances can be returned as JSON just like you can with plain Eloquent models, except the mutators you specify on your `Presenter` will also be serialized with the output.
-
-```php
-public function show($id)
-{
-    return User::findOrFail($id)->present(ApiPresenter::class);
-}
-
-/*
-// Outputs something like this
-{
-    "id":1,
-    "full_name":"David Lee Hemphill",
-    "first_name":"David",
-    "last_name":"Hemphill",
-    "created_at":"2016-10-14 12:00:00",
-    "updated_at":"2016-12-14 12:00:00"
-}
-*/
-```
-
-A collection of presented models can be converted to JSON and array format just like normal.
-
-```php
-public function index()
-{
-    return User::all()->present(ApiPresenter::class);
-}
-
-/*
-// Outputs something like this
-[{
-    "id":1,
-    "full_name":"David Lee Hemphill",
-    "first_name":"David",
-    "last_name":"Hemphill",
-    "created_at":"2016-10-14 12:00:00",
-    "updated_at":"2016-12-14 12:00:00"
-},
-{
-    "id":1,
-    "full_name":"Tess Rowlett",
-    "first_name":"Tess",
-    "last_name":"Rowlett",
-    "created_at":"2016-10-14 12:00:00",
-    "updated_at":"2016-12-14 12:00:00"
-}]
-*/
-```
-
-### Hiding Attributes from array/JSON output
-
-You can also specify `$visible` and `$hidden` properties on your Presenters. Setting `$visible` acts as a whitelist of attributes you want to appear in the array/JSON output. Setting `$hidden` acts as a blacklist of attributes you wish to be hidden from the array/JSON output. This will also remove or show any attributes from the model itself.
-
-Using our example from earlier:
+There are times you may wish to keep certain keys from being rendered inside your `Presenter`. You can use the `hide` property on the `Presenter` to keep any default `Model` attributes from being used in the output:
 
 ```php
 <?php
@@ -188,31 +187,27 @@ use Hemp\Presenter\Presenter;
 class ApiPresenter extends Presenter
 {
     protected $hidden = ['first_name', 'last_name'];
-
-    public function createdDate() {
-        return $this->model->created_at->format('n/j/Y');
-    }
-
-    public function getFullNameAttribute()
-    {
-        return trim($this->model->first_name . ' ' . $this->model->last_name);
-    }
 }
 ```
 
-This will output something like this. Notice how the `first_name` and `last_name` attributes have been removed:
+This will keep the underlying `Model` instance's `first_name` and `last_name` attributes from showing in the final output.
 
-```
+You may also specify the `visible` property on the `Presenter` to act as a whitelist of attributes that should be shown in the output. 
 
-/*
+```php
+<?php
+
+namespace App\Presenters;
+
+use Hemp\Presenter\Presenter;
+
+class ApiPresenter extends Presenter
 {
-    "id":1,
-    "full_name":"David Lee Hemphill",
-    "created_at":"2016-10-14 12:00:00",
-    "updated_at":"2016-12-14 12:00:00"
+    protected $visible = ['subscribed'];
 }
-*/
 ```
+
+**Note** If a key is specified in both the `hidden` and `visible` properties, then it will be assumed that you want it to be visible in the rendered output.
 
 ## Support
 
