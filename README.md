@@ -38,7 +38,7 @@ This will generate an empty `Presenter` class inside of `app/Presenters`.
 
 ## Customizing `Presenter` Classes
 
-At their core, `Presenter`s are simple classes designed to encapsulate complex or repetitive view logic. What makes `hemp/presenter` nice is it allows you to attach methods and magic accessors to these `Presenter` objects. For example, take this `ApiPresenter` class:
+At their core, presenters are simple classes designed to encapsulate complex or repetitive view logic. What makes `hemp/presenter` nice is it allows you to attach methods and magic accessors to these `Presenter` objects. For example, take this `ApiPresenter` class:
 
 ```php
 <?php
