@@ -5,7 +5,6 @@ namespace Hemp\Presenter;
 use ArrayAccess;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Hemp\Presenter\PresenterFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
