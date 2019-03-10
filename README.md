@@ -53,6 +53,13 @@ class ApiPresenter extends Presenter
 
 ## Usage
 
+Use the `make` factory method of the `Presenter` class:
+
+```php
+$user = User::first();
+$presentedUser = Presenter::make($user, ApiPresenter::class);
+```
+
 Use the `present` helper:
 
 ```php

@@ -222,6 +222,15 @@ class PresenterTest extends IntegrationTest
     }
 
     /** @test */
+    public function you_can_create_presenters_using_the_make_method()
+    {
+        $user = factory(User::class)->create(['name' => 'David Hemphill']);
+        $presenter = Presenter::make($user, UserProfilePresenter::class);
+
+        $this->assertInstanceOf(UserProfilePresenter::class, $presenter);
+    }
+
+    /** @test */
     public function it_can_camel_case_the_attributes_instead_of_snake_casing_them()
     {
         Carbon::setTestNow(Carbon::parse('Oct 14 2019'));

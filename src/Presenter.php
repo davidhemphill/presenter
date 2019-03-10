@@ -5,6 +5,7 @@ namespace Hemp\Presenter;
 use ArrayAccess;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Hemp\Presenter\PresenterFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
@@ -48,6 +49,18 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     public function __construct(Model $model)
     {
         $this->model = $model;
+    }
+
+    /**
+     * Create a new Presenter instance.
+     *
+     * @param Model $model
+     * @param \Hemp\Presenter\Presenter $presenter
+     * @return void
+     */
+    public static function make(Model $model, $presenter)
+    {
+        return (new PresenterFactory)($model, $presenter);
     }
 
     /**
