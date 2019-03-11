@@ -283,6 +283,25 @@ class PresenterTest extends IntegrationTest
     }
 
     /** @test */
+    public function you_can_set_the_casing_strategy_at_runtime()
+    {
+        $presenter = factory(User::class)
+            ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
+            ->present(UserProfilePresenter::class);
+
+        $this->assertTrue($presenter->snakeCase);
+
+        $presenter->camelCase();
+
+        $this->assertFalse($presenter->snakeCase);
+
+        $this->assertEquals(
+            ['name', 'email', 'updatedAt', 'createdAt', 'id'], 
+            array_keys($presenter->toArray())
+        );
+    }
+
+    /** @test */
     public function a_collection_of_presented_eloquent_models_will_still_return_json()
     {
         factory(User::class)->create(['name' => 'David Hemphill']);

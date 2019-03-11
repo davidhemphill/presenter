@@ -71,7 +71,7 @@ This `Presenter` might output something like this:
     "last_name": "Hemphill",
     "created_at": "2016-10-14 12:00:00",
     "updated_at": "2016-12-14 12:00:00",
-    "full_name": "David Lee Hemphill" // The magic accessor
+    "full_name": "David Hemphill" // The magic accessor
 }
 ```
 
@@ -105,11 +105,19 @@ This will cause the rendered output to look like this:
     "lastName": "Hemphill",
     "createdAt": "2016-10-14 12:00:00",
     "updatedAt": "2016-12-14 12:00:00",
-    "fullName": "David Lee Hemphill"
+    "fullName": "David Hemphill"
 }
 ```
 
 You might like this option if your front-end JavaScript style guide uses mostly camelCased variables.
+
+In addition, you can set the strategy used at runtime:
+
+```php
+Presenter::make($user, ApiPresenter::class)->snakeCase();
+// Or
+Presenter::make($user, ApiPresenter::class)->camelCase();
+```
 
 ## Presenting Single Models
 

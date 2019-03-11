@@ -51,6 +51,30 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     }
 
     /**
+     * Render the output using camelCase keys.
+     *
+     * @return $this
+     */
+    public function camelCase()
+    {
+        $this->snakeCase = false;
+
+        return $this;
+    }
+
+    /**
+     * Render the output using snake_case keys.
+     *
+     * @return $this
+     */
+    // public function snakeCase()
+    // {
+    //     $this->snakeCase = false;
+
+    //     return $this;
+    // }
+
+    /**
      * Create a new Presenter instance.
      *
      * @param Model $model
