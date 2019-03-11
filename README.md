@@ -141,17 +141,28 @@ $user = User::first();
 $presentedUser = present($user, ApiPresenter::class); 
 ```
 
-Or you can use the `Presentable` trait on your `Model`. This will allow you to call `present` on it directly:
+Or you can use the `Hemp\Presenter\Presentable` trait on your `Model`. This will allow you to call `present` on it directly:
 
 ```php
+use Hemp\Presenter\Presentable;
+
+class User extends \Illuminate\Database\Eloquent\Model
+{
+    use Presentable;
+}
+
 $presentedUser = User::first()->present(ApiPresenter::class);
 ```
 
 Also, when using the `Presentable` trait, you can specify a default presenter using the `defaultPresenter` attribute on the `Model` and then calling `present`:
 
 ```php
+use Hemp\Presenter\Presentable;
+
 class User extends \Illuminate\Database\Eloquent\Model
 {
+    use Presentable;
+
     public $defaultPresenter = App\Presenters\ApiPresenter::class,
 }
 
