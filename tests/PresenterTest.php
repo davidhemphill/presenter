@@ -296,7 +296,7 @@ class PresenterTest extends IntegrationTest
         $this->assertFalse($presenter->snakeCase);
 
         $this->assertEquals(
-            ['name', 'email', 'updatedAt', 'createdAt', 'id'], 
+            ['name', 'email', 'updatedAt', 'createdAt', 'id'],
             array_keys($presenter->toArray())
         );
     }
