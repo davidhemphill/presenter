@@ -299,6 +299,15 @@ class PresenterTest extends IntegrationTest
             ['name', 'email', 'updatedAt', 'createdAt', 'id'],
             array_keys($presenter->toArray())
         );
+
+        $presenter->snakeCase();
+
+        $this->assertTrue($presenter->snakeCase);
+
+        $this->assertEquals(
+            ['name', 'email', 'updated_at', 'created_at', 'id'],
+            array_keys($presenter->toArray())
+        );
     }
 
     /** @test */

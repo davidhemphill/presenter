@@ -67,12 +67,12 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      *
      * @return $this
      */
-    // public function snakeCase()
-    // {
-    //     $this->snakeCase = false;
+    public function snakeCase()
+    {
+        $this->snakeCase = true;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     /**
      * Create a new Presenter instance.

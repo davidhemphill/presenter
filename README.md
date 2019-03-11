@@ -111,11 +111,10 @@ This will cause the rendered output to look like this:
 
 You might like this option if your front-end JavaScript style guide uses mostly camelCased variables.
 
-In addition, you can set the strategy used at runtime:
+In addition, you can set the strategy used at runtime using the `snakeCase` and `camelCase` setters:
 
 ```php
 Presenter::make($user, ApiPresenter::class)->snakeCase();
-// Or
 Presenter::make($user, ApiPresenter::class)->camelCase();
 ```
 
