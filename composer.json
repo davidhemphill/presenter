@@ -1,36 +1,50 @@
 {
     "name": "hemp/presenter",
     "description": "Easy Model Presenters in Laravel",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "David Hemphill",
+            "email": "davidlee.hemphill@gmail.com"
+        }
+    ],
     "type": "project",
     "require": {
-        "illuminate/support": "~5.1|~5.2|~5.3|~5.4|~5.5|~5.6",
-        "phpunit/phpunit": "^7.5"
+        "illuminate/support": "~5.7|~5.8"
     },
     "require-dev": {
-        "mockery/mockery": "^1.0@dev",
-        "illuminate/database": "~5.1|~5.2|~5.3|~5.4|~5.5|~5.6",
-        "graham-campbell/testbench-core": "^1.1",
-        "graham-campbell/testbench": "^3.2"
+        "mockery/mockery": "^1.0",
+        "orchestra/database": "3.8.*",
+        "orchestra/testbench": "3.8.*",
+        "phpunit/phpunit": "^7.5"
     },
     "autoload": {
         "psr-4": {
             "Hemp\\Presenter\\": "src"
         },
-        "files": ["helpers.php"]
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Hemp\\Tests\\Presentable\\": "tests/"
+            "Hemp\\Presenter\\Tests\\": "tests/"
         }
     },
     "config": {
-        "preferred-install": "dist"
+        "sort-packages": true
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "extra": {
         "laravel": {
-            "providers": ["Hemp\\Presenter\\PresenterServiceProvider"]
+            "providers": [
+                "Hemp\\Presenter\\PresenterServiceProvider"
+            ]
         }
     }
 }

@@ -3,111 +3,112 @@
 namespace Hemp\Presenter;
 
 use ArrayAccess;
-use BadMethodCallException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
+use Mockery\Exception\BadMethodCallException;
 
-abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
+abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
 {
     /**
-     * The attributes that should be visible in arrays.
-     *
-     * @var array
-     */
-    protected $visible = [];
-
-    /**
-     * The attributes that should be hidden in arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [];
-
-    /**
-     * The cache of the mutated attributes for each class.
-     *
-     * @var array
-     */
-    protected static $mutatorCache;
-
-    /**
-     * Indicates whether attributes are snake cased on arrays.
+     * Whether to snake case the attributes.
      *
      * @var bool
      */
-    public static $snakeAttributes = true;
+    public $snakeCase = true;
 
     /**
-     * The decorated model.
+     * The Model being presented.
      *
-     * @var Illuminate/Database/Eloquent/Model|Hemp/Presenter/Presenter
+     * @var \Illuminate\Database\Eloquent\Model
      */
-    protected $model;
+    public $model;
 
     /**
-     * The original, undecorated model.
+     * The hidden attributes on the Presenter.
      *
-     * @var Illuminate/Database/Eloquent/Model
+     * @var array
      */
-    protected $originalModel;
+    public $hidden = [];
 
     /**
-     * Create a new instance of the Presenter.
+     * The visible attributes on the Presenter.
      *
-     * @param Illuminate/Database/Eloquent/Model $model
+     * @var array
      */
-    public function __construct($model)
+    public $visible = [];
+
+    /**
+     * Create a new Presenter instance.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     */
+    public function __construct(Model $model)
     {
         $this->model = $model;
-
-        if ($this->model instanceof self) {
-            $model = $model->getOriginalModel();
-        }
-
-        $this->originalModel = $model;
     }
 
     /**
-     * Get the decorated model.
+     * Render the output using camelCase keys.
      *
-     * @return Illuminate/Database/Eloquent/Model|Hemp/Presneter/Presenter
+     * @return $this
      */
-    public function getModel()
+    public function camelCase()
     {
-        return $this->model;
+        $this->snakeCase = false;
+
+        return $this;
     }
 
     /**
-     * Get the original, undecorated model.
+     * Render the output using snake_case keys.
      *
-     * @return Illuminate/Database/Eloquent/Model
+     * @return $this
      */
-    public function getOriginalModel()
+    public function snakeCase()
     {
-        return $this->originalModel;
+        $this->snakeCase = true;
+
+        return $this;
     }
 
     /**
-     * Pass magic properties to accessors.
+     * Create a new Presenter instance.
      *
-     * @param string $name
-     *
-     * @return mixed
+     * @param Model $model
+     * @param \Hemp\Presenter\Presenter|null $presenter
+     * @return void
      */
-    public function __get($name)
+    public static function make(Model $model, $presenter = null)
     {
-        $method = 'get'.studly_case($name).'Attribute';
-
-        if (method_exists($this, $method)) {
-            return $this->{$method}($name);
-        }
-
-        return $this->model->{$name};
+        return (new PresenterFactory)($model, $presenter ?? static::class);
     }
 
     /**
-     * Call the model's version of the method if available.
+     * Return a collection of presented models.
+     *
+     * @param array|\Illuminate\Support\Collection $models
+     * @return \Illuminate\Support\Collection
+     */
+    public static function collection($models, $presenter = null)
+    {
+        return collect($models)->present($presenter ?? static::class);
+    }
+
+    /**
+     * Return the keys for the presented model and cache the value.
+     *
+     * @return array
+     */
+    protected function modelKeys()
+    {
+        return array_keys($this->model->toArray());
+    }
+
+    /**
+     * Call the Model's version of the method if available.
      *
      * @param string $method
      * @param array  $args
@@ -120,27 +121,27 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Get the visible attributes for the model.
+     * Return the value of a magic accessor.
      *
-     * @return array
+     * @param string $name
+     * @return mixed
      */
-    public function getVisiblePresenterAttributes()
+    public function __get($attribute)
     {
-        return $this->visible;
+        $method = $this->getStudlyAttributeMethod($attribute);
+
+        // If the magic getter exists on this Presenter, let's call it and return the value,
+        // passing in the original model instance, so the user can mutate it first.
+        if (method_exists($this, $method)) {
+            return $this->{$method}($this->model);
+        }
+
+        // If not, then let's delegate the magic call to the underlying Model instance.
+        return $this->model->{$attribute};
     }
 
     /**
-     * Get the hidden attributes for the model.
-     *
-     * @return array
-     */
-    public function getHiddenPresenterAttributes()
-    {
-        return $this->hidden;
-    }
-
-    /**
-     * Convert the decorated instance to a string.
+     * Convert the Presenter to a string.
      *
      * @return string
      */
@@ -150,9 +151,7 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Convert the decorated instance to JSON.
-     *
-     * @param int $options
+     * Convert the Presenter to a JSON string.
      *
      * @return string
      */
@@ -162,149 +161,130 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Convert the decorator instance to an array.
+     * Convert the Presenter to an array.
      *
      * @return array
      */
     public function toArray()
     {
-        $mutatedAttributes = $this->mutatorsToArray();
-
-        $all = array_merge($this->model->toArray(), $mutatedAttributes);
-        if (! static::$snakeAttributes) {
-            $all = array_combine(
-                array_map(function ($k) {
-                    return Str::camel($k);
-                }, array_keys($all)),
-                $all
-            );
-        }
-
-        $items = $this->getArrayableItems($all);
-
-        if (! static::$snakeAttributes) {
-            $items = array_combine(
-                array_map(function ($k) {
-                    return Str::camel($k);
-                }, array_keys($items)),
-                $items
-            );
-        }
-
-        return array_intersect_key($all, $items);
+        return $this->processKeys(
+            array_merge(
+                $this->removeHiddenAttributes($this->model->toArray()),
+                $this->additionalAttributes()
+            )
+        );
     }
 
     /**
-     * Convert the decorators instance's mutators to an array.
+     * Remove the non-visible attributes from the output.
      *
+     * @param array $array
      * @return array
      */
-    public function mutatorsToArray()
+    protected function removeHiddenAttributes($attributes)
     {
-        $mutatedAttributes = [];
-
-        $mutators = $this->getMutatedAttributes();
-
-        foreach ($mutators as $mutator) {
-            $mutatedAttributes[Str::snake($mutator)] = $this->mutateAttribute($mutator);
-        }
-
-        return $mutatedAttributes;
+        return Arr::only($attributes, $this->visibleAttributes());
     }
 
     /**
-     * Get the mutated attributes for a given instance.
-     *
-     * @return array
-     */
-    public function getMutatedAttributes()
-    {
-        $class = static::class;
-
-        if (! isset(static::$mutatorCache[$class])) {
-            static::cacheMutatedAttributes($class);
-        }
-
-        return static::$mutatorCache[$class];
-    }
-
-    /**
-     * Extract and cache all the mutated attributes of a class.
-     *
-     * @param string $class
+     * Determine the visible attributes for the Presenter, taking into account the key might exist
+     * in both the `hidden` and `visible` arrays. If a key is found in both, then let's assume
+     * it is `visible`.
      *
      * @return void
      */
-    public static function cacheMutatedAttributes($class)
+    public function visibleAttributes()
     {
-        $mutatedAttributes = [];
-
-        // Here we will extract all of the mutated attributes so that we can quickly
-        // spin through them after we export models to their array form, which we
-        // need to be fast. This'll let us know the attributes that can mutate.
-        if (preg_match_all('/(?<=^|;)get([^;]+?)Attribute(;|$)/', implode(';', get_class_methods($class)), $matches)) {
-            foreach ($matches[1] as $match) {
-                if (static::$snakeAttributes) {
-                    $match = Str::snake($match);
-                }
-
-                $mutatedAttributes[] = lcfirst($match);
-            }
+        if (empty($this->visible)) {
+            return array_flip(Arr::except(array_flip($this->modelKeys()), $this->hidden));
         }
 
-        static::$mutatorCache[$class] = $mutatedAttributes;
+        return Arr::only($this->modelKeys(), array_flip($this->visible));
     }
 
     /**
-     * Get the value of an attribute using its mutator.
-     *
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return mixed
-     */
-    protected function mutateAttribute($key)
-    {
-        return $this->{'get'.Str::studly($key).'Attribute'}();
-    }
-
-    /**
-     * Get an attribute array of all arrayable values.
-     *
-     * @param array $values
+     * Return the additional attributes for the Presenter.
      *
      * @return array
      */
-    protected function getArrayableItems($values)
+    protected function additionalAttributes()
     {
-        if (count($this->getVisiblePresenterAttributes()) > 0) {
-            $values = array_intersect_key($values, array_flip($this->getVisiblePresenterAttributes()));
-        }
+        return collect($this->availableAttributes())->mapWithKeys(function ($attribute) {
+            $attributeKey = $this->snakeCase ? lcfirst(Str::snake($attribute)) : lcfirst(Str::camel($attribute));
 
-        if (count($this->getHiddenPresenterAttributes()) > 0) {
-            $values = array_diff_key($values, array_flip($this->getHiddenPresenterAttributes()));
-        }
-
-        return $values;
+            return [$attributeKey => $this->mutateAttribute($attribute)];
+        })->all();
     }
 
     /**
-     * Return true if the property is set and not null.
+     * Return the mutable attributes for the Presenter;.
      *
-     * @param string $name
-     *
-     * @return bool
+     * @return array
      */
-    public function __isset($name)
+    protected function availableAttributes()
     {
-        return $this->offsetExists($name);
+        return collect($this->getAttributeMatches())->map(function ($attribute) {
+            return lcfirst(Str::snake($attribute));
+        });
     }
 
     /**
-     * Return true if the offset exists and is not null.
+     * Get any attributes with accessors defined on the Presenter.
      *
-     * @param mixed $offset
+     * @return array
+     */
+    protected function getAttributeMatches()
+    {
+        return with(implode(';', get_class_methods(static::class)), function ($attributeMethods) {
+            preg_match_all('/(?<=^|;)get([^;]+?)Attribute(;|$)/', $attributeMethods, $matches);
+
+            return $matches[1];
+        });
+    }
+
+    /**
+     * Mutate the given Presenter attribute.
      *
+     * @param string $attribute
+     * @return string
+     */
+    protected function mutateAttribute($attribute)
+    {
+        return $this->{$this->getStudlyAttributeMethod($attribute)}($this->model);
+    }
+
+    /**
+     * Get the studly attribute method name.
+     *
+     * @param string $attribute
+     * @return string
+     */
+    protected function getStudlyAttributeMethod($attribute)
+    {
+        $studlyAttribute = Str::studly($attribute);
+
+        return "get{$studlyAttribute}Attribute";
+    }
+
+    /**
+     * Process the given attribute's keys.
+     *
+     * @param array $attributes
+     * @return array
+     */
+    protected function processKeys($attributes)
+    {
+        return collect($attributes)->mapWithKeys(function ($value, $key) {
+            return [
+                lcfirst($this->snakeCase ? Str::snake($key) : Str::camel($key)) => $value,
+            ];
+        })->all();
+    }
+
+    /**
+     * Determine if the given offset exists on the Presenter.
+     *
+     * @param string $offset
      * @return bool
      */
     public function offsetExists($offset)
@@ -313,10 +293,9 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Return the value at the specified offset.
+     * Retrieve the value at the given offset.
      *
-     * @param mixed $offset
-     *
+     * @param string $offset
      * @return mixed
      */
     public function offsetGet($offset)
@@ -325,35 +304,25 @@ abstract class Presenter implements Jsonable, Arrayable, ArrayAccess
     }
 
     /**
-     * Required implementation to satisfy the ArrayAccess interface,
-     * but throws as a BadMethodCallException as this is a read only
-     * implementation.
+     * Set the value at the given offset.
      *
-     * @param mixed $offset
-     * @param mixed $value
-     *
-     * @throws \BadMethodCallException
-     *
-     * @return void
+     * @param string $offset
+     * @param string $value
+     * @throws BadMethodCallException
      */
     public function offsetSet($offset, $value)
     {
-        throw new BadMethodCallException('Not implemented - read only implementation.');
+        throw new BadMethodCallException('Hemp/Presenter does not support write methods');
     }
 
     /**
-     * Required implementation to satisfy the ArrayAccess interface,
-     * but throws as a BadMethodCallException as this is a read only
-     * implementation.
+     * Unset the value at the given offset.
      *
-     * @param mixed $offset
-     *
-     * @throws \BadMethodCallException
-     *
-     * @return void
+     * @param string $offset
+     * @throws BadMethodCallException
      */
     public function offsetUnset($offset)
     {
-        throw new BadMethodCallException('Not implemented - read only implementation.');
+        throw new BadMethodCallException('Hemp/Presenter does not support write methods');
     }
 }
