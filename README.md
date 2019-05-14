@@ -6,7 +6,6 @@ This package makes it fast, fun, and profitable to decorate your Eloquent models
 
 For a little primer on the problems presenters solve, take a look at this article: [Presenters in Laravel](https://davidhemphill.com/presenters-in-laravel/).
 
-
 ## Installation
 
 Install the package via [Composer](https://getcomposer.org/):
@@ -58,7 +57,7 @@ class ApiPresenter extends Presenter
 }
 ```
 
-This class has a custom method `createdDate` that can be called wherever this `Presenter` is used. It also has a magic accessor `getFullNameAttribute` that will be accessible via the `Presenter` like so: `$user->full_name`. This works exactly like Eloquent's magic accessors...when the `Presenter` is serialized into a response (like for a view or API response), these magic accessors will be called and added to the rendered output. 
+This class has a custom method `createdDate` that can be called wherever this `Presenter` is used. It also has a magic accessor `getFullNameAttribute` that will be accessible via the `Presenter` like so: `$user->full_name`. This works exactly like Eloquent's magic accessors...when the `Presenter` is serialized into a response (like for a view or API response), these magic accessors will be called and added to the rendered output.
 
 You'll notice we're calling `$this->first_name` and `$this->last_name`. These are not available on the `Presenter` class itself, but are being delegated to the underlying `Model` instance.
 
@@ -66,12 +65,12 @@ This `Presenter` might output something like this:
 
 ```json5
 {
-    "id": 1, 
-    "first_name": "David",
-    "last_name": "Hemphill",
-    "created_at": "2016-10-14 12:00:00",
-    "updated_at": "2016-12-14 12:00:00",
-    "full_name": "David Hemphill" // The magic accessor
+  id: 1,
+  first_name: "David",
+  last_name: "Hemphill",
+  created_at: "2016-10-14 12:00:00",
+  updated_at: "2016-12-14 12:00:00",
+  full_name: "David Hemphill" // The magic accessor
 }
 ```
 
@@ -100,12 +99,12 @@ This will cause the rendered output to look like this:
 
 ```json
 {
-    "id": 1, 
-    "firstName": "David",
-    "lastName": "Hemphill",
-    "createdAt": "2016-10-14 12:00:00",
-    "updatedAt": "2016-12-14 12:00:00",
-    "fullName": "David Hemphill"
+  "id": 1,
+  "firstName": "David",
+  "lastName": "Hemphill",
+  "createdAt": "2016-10-14 12:00:00",
+  "updatedAt": "2016-12-14 12:00:00",
+  "fullName": "David Hemphill"
 }
 ```
 
@@ -138,7 +137,7 @@ You may also use the `present` global function, if that's your jam:
 
 ```php
 $user = User::first();
-$presentedUser = present($user, ApiPresenter::class); 
+$presentedUser = present($user, ApiPresenter::class);
 ```
 
 Or you can use the `Hemp\Presenter\Presentable` trait on your `Model`. This will allow you to call `present` on it directly:
@@ -193,7 +192,7 @@ $presentedUsers = User::all()->present(ApiPresenter::class);
 
 ## Hiding Model Attributes From Output
 
-There are times you may wish to keep certain keys from being rendered inside your `Presenter`. You can use the `hide` property on the `Presenter` to keep any default `Model` attributes from being used in the output:
+There are times you may wish to keep certain keys from being rendered inside your `Presenter`. You can use the `hidden` property on the `Presenter` to keep any default `Model` attributes from being used in the output:
 
 ```php
 <?php
@@ -208,9 +207,9 @@ class ApiPresenter extends Presenter
 }
 ```
 
-This will keep the underlying `Model` instance's `stripe_private_key` attributes from showing in the final output.
+This will keep the underlying `Model` instance's `stripe_private_key` attribute from showing in the final output.
 
-You may also specify the `visible` property on the `Presenter` to act as a whitelist of attributes that should be shown in the output. 
+You may also specify the `visible` property on the `Presenter` to act as a whitelist of attributes that should be shown in the output.
 
 ```php
 <?php
