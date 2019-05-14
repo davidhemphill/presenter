@@ -43,9 +43,9 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Create a new Presenter instance.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \Illuminate\Database\Eloquent\Model|mixed $model
      */
-    public function __construct(Model $model)
+    public function __construct($model)
     {
         $this->model = $model;
     }

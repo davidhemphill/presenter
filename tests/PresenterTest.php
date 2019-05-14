@@ -199,6 +199,24 @@ class PresenterTest extends IntegrationTest
     }
 
     /** @test */
+    public function you_can_present_an_object_that_is_not_a_model()
+    {
+        $notAModel = new class {
+            public $name = 'david';
+
+            public function fullName()
+            {
+                return 'David Hemphill';
+            }
+        };
+
+        $presenter = new class($notAModel) extends Presenter {};
+
+        $this->assertEquals('david', $presenter->name);
+        $this->assertEquals('David Hemphill', $presenter->fullName());
+    }
+
+    /** @test */
     public function you_can_present_a_collection_of_eloquent_models()
     {
         $user = factory(User::class)->create();
