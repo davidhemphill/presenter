@@ -163,7 +163,7 @@ class User extends \Illuminate\Database\Eloquent\Model
 {
     use Presentable;
 
-    public $defaultPresenter = App\Presenters\ApiPresenter::class,
+    public $defaultPresenter = App\Presenters\ApiPresenter::class;
 }
 
 $presentedUser = User::first()->present();
