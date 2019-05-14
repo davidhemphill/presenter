@@ -210,7 +210,8 @@ class PresenterTest extends IntegrationTest
             }
         };
 
-        $presenter = new class($notAModel) extends Presenter {};
+        $presenter = new class($notAModel) extends Presenter {
+        };
 
         $this->assertEquals('david', $presenter->name);
         $this->assertEquals('David Hemphill', $presenter->fullName());
