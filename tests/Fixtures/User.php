@@ -3,9 +3,9 @@
 namespace Hemp\Presenter\Tests\Fixtures;
 
 use Hemp\Presenter\Presentable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
