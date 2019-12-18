@@ -34,7 +34,7 @@ class MakePresenterCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/presenter.stub';
+        return __DIR__.'/Presenter.stub';
     }
 
     /**
