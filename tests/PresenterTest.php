@@ -4,14 +4,14 @@ namespace Hemp\Presenter\Tests;
 
 use BadMethodCallException;
 use Hemp\Presenter\Presenter;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
+use Hemp\Presenter\Tests\Fixtures\CamelCaseAttributesPresenter;
+use Hemp\Presenter\Tests\Fixtures\HiddenAndVisibleAttributesPresenter;
+use Hemp\Presenter\Tests\Fixtures\HiddenAttributesPresenter;
 use Hemp\Presenter\Tests\Fixtures\User;
 use Hemp\Presenter\Tests\Fixtures\UserProfilePresenter;
 use Hemp\Presenter\Tests\Fixtures\UserWithDefaultPresenter;
-use Hemp\Presenter\Tests\Fixtures\HiddenAttributesPresenter;
-use Hemp\Presenter\Tests\Fixtures\CamelCaseAttributesPresenter;
-use Hemp\Presenter\Tests\Fixtures\HiddenAndVisibleAttributesPresenter;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class PresenterTest extends IntegrationTest
 {
