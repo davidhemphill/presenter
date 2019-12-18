@@ -11,7 +11,7 @@ trait Presentable
      * to the Presenter defined on the Model instance.
      *
      * @param string|null $presenter
-     * @return Hemp\Presenter
+     * @return \Hemp\Presenter
      */
     public function present($presenter = null)
     {
