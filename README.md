@@ -1,6 +1,6 @@
 # 🌿 Hemp Presenter
 
-[![Chipper CI Status for davidhemphill/presenter](https://app.chipperci.com/projects/f02344ae-0f4d-4373-9006-d73b692735a1/status/master](https://app.chipperci.com/projects/f062d498-08f7-469a-aece-88c4afbbf516)
+[![Chipper CI Status for davidhemphill/presenter](https://app.chipperci.com/projects/f02344ae-0f4d-4373-9006-d73b692735a1/status/master)](https://app.chipperci.com/projects/f062d498-08f7-469a-aece-88c4afbbf516)
 
 This package makes it fast, fun, and profitable to decorate your Eloquent models for presentation in views, PDFs, CSV files, or anywhere else in your project.
 

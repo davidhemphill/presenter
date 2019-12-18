@@ -2,9 +2,9 @@
 
 namespace Hemp\Presenter\Tests;
 
-use Orchestra\Testbench\TestCase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Orchestra\Testbench\TestCase;
 
 abstract class IntegrationTest extends TestCase
 {

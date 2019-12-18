@@ -3,11 +3,11 @@
 namespace Hemp\Presenter;
 
 use ArrayAccess;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Contracts\Support\Arrayable;
 use Mockery\Exception\BadMethodCallException;
 
 abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
