@@ -1,6 +1,6 @@
 # 🌿 Hemp Presenter
 
-[![Codeship Status for davidhemphill/presenter](https://app.codeship.com/projects/2ef68e40-fcaa-0136-86ee-2eee2779cdfb/status?branch=rewrite)](https://app.codeship.com/projects/322407)
+[![Chipper CI Status for davidhemphill/presenter](https://app.chipperci.com/projects/f02344ae-0f4d-4373-9006-d73b692735a1/status/master](https://app.chipperci.com/projects/f062d498-08f7-469a-aece-88c4afbbf516)
 
 This package makes it fast, fun, and profitable to decorate your Eloquent models for presentation in views, PDFs, CSV files, or anywhere else in your project.
 
@@ -46,14 +46,15 @@ use Hemp\Presenter\Presenter;
 
 class ApiPresenter extends Presenter
 {
-    public function createdDate() {
-        return $this->created_at->format('n/j/Y');
-    }
+  public function createdDate()
+  {
+    return $this->created_at->format('n/j/Y');
+  }
 
-    public function getFullNameAttribute()
-    {
-        return trim($this->first_name . ' ' . $this->last_name);
-    }
+  public function getFullNameAttribute()
+  {
+    return trim($this->first_name . ' ' . $this->last_name);
+  }
 }
 ```
 
@@ -66,11 +67,11 @@ This `Presenter` might output something like this:
 ```json5
 {
   id: 1,
-  first_name: "David",
-  last_name: "Hemphill",
-  created_at: "2016-10-14 12:00:00",
-  updated_at: "2016-12-14 12:00:00",
-  full_name: "David Hemphill" // The magic accessor
+  first_name: 'David',
+  last_name: 'Hemphill',
+  created_at: '2016-10-14 12:00:00',
+  updated_at: '2016-12-14 12:00:00',
+  full_name: 'David Hemphill', // The magic accessor
 }
 ```
 
@@ -91,7 +92,7 @@ When outputting the `Presenter` to an `array` or JSON, if you'd like each of the
 ```php
 class ApiPresenter extends Presenter
 {
-    public $snakeCase = false;
+  public $snakeCase = false;
 }
 ```
 
@@ -147,7 +148,7 @@ use Hemp\Presenter\Presentable;
 
 class User extends \Illuminate\Database\Eloquent\Model
 {
-    use Presentable;
+  use Presentable;
 }
 
 $presentedUser = User::first()->present(ApiPresenter::class);
@@ -160,9 +161,9 @@ use Hemp\Presenter\Presentable;
 
 class User extends \Illuminate\Database\Eloquent\Model
 {
-    use Presentable;
+  use Presentable;
 
-    public $defaultPresenter = App\Presenters\ApiPresenter::class;
+  public $defaultPresenter = App\Presenters\ApiPresenter::class;
 }
 
 $presentedUser = User::first()->present();
@@ -203,7 +204,7 @@ use Hemp\Presenter\Presenter;
 
 class ApiPresenter extends Presenter
 {
-    protected $hidden = ['stripe_private_key'];
+  protected $hidden = ['stripe_private_key'];
 }
 ```
 
@@ -220,7 +221,7 @@ use Hemp\Presenter\Presenter;
 
 class ApiPresenter extends Presenter
 {
-    protected $visible = ['name', 'email'];
+  protected $visible = ['name', 'email'];
 }
 ```
 
