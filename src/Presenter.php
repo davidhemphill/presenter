@@ -199,7 +199,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
             return array_flip(Arr::except(array_flip($this->attributes()), $this->hidden));
         }
 
-        return Arr::only($this->attributes(), array_flip($this->visible));
+        return array_flip(Arr::only(array_flip($this->attributes()), $this->visible));
     }
 
     /**
