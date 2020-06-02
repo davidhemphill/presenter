@@ -46,5 +46,10 @@
                 "Hemp\\Presenter\\PresenterServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "test": [
+            "phpunit"
+        ]
     }
 }

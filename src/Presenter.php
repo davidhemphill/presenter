@@ -170,7 +170,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
         return $this->processKeys(
             array_merge(
                 $this->removeHiddenAttributes($this->model->toArray()),
-                $this->additionalAttributes()
+                $this->removeHiddenAttributes($this->additionalAttributes())
             )
         );
     }
@@ -196,10 +196,23 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     public function visibleAttributes()
     {
         if (empty($this->visible)) {
-            return array_flip(Arr::except(array_flip($this->modelKeys()), $this->hidden));
+            return array_flip(Arr::except(array_flip($this->attributes()), $this->hidden));
         }
 
-        return Arr::only($this->modelKeys(), array_flip($this->visible));
+        return Arr::only($this->attributes(), array_flip($this->visible));
+    }
+
+    /**
+     * Return all attributes for the Presenter.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return array_merge(
+            $this->modelKeys(),
+            $this->availableAttributes()->toArray()
+        );
     }
 
     /**
@@ -210,9 +223,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     protected function additionalAttributes()
     {
         return collect($this->availableAttributes())->mapWithKeys(function ($attribute) {
-            $attributeKey = $this->snakeCase ? lcfirst(Str::snake($attribute)) : lcfirst(Str::camel($attribute));
-
-            return [$attributeKey => $this->mutateAttribute($attribute)];
+            return [$attribute => $this->mutateAttribute(Str::snake($attribute))];
         })->all();
     }
 
@@ -224,7 +235,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     protected function availableAttributes()
     {
         return collect($this->getAttributeMatches())->map(function ($attribute) {
-            return lcfirst(Str::snake($attribute));
+            return lcfirst($this->snakeCase ? lcfirst(Str::snake($attribute)) : lcfirst(Str::camel($attribute)));
         });
     }
 
