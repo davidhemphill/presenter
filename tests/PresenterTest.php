@@ -7,6 +7,7 @@ use Hemp\Presenter\Presenter;
 use Hemp\Presenter\Tests\Fixtures\CamelCaseAttributesPresenter;
 use Hemp\Presenter\Tests\Fixtures\HiddenAndVisibleAttributesPresenter;
 use Hemp\Presenter\Tests\Fixtures\HiddenAttributesPresenter;
+use Hemp\Presenter\Tests\Fixtures\VisibleAttributesPresenter;
 use Hemp\Presenter\Tests\Fixtures\User;
 use Hemp\Presenter\Tests\Fixtures\UserProfilePresenter;
 use Hemp\Presenter\Tests\Fixtures\UserWithDefaultPresenter;
@@ -370,7 +371,7 @@ class PresenterTest extends IntegrationTest
             'email' => 'david@laravel.com',
         ], $presenter->toArray());
     }
-
+ 
     /** @test */
     public function a_presenter_removes_hidden_attributes_and_leaves_visible_model_attributes_from_output()
     {
@@ -391,6 +392,22 @@ class PresenterTest extends IntegrationTest
             ->present(HiddenAndVisibleAttributesPresenter::class);
 
         $this->assertTrue(isset($presenter['name']));
+    }
+
+    /** @test */
+    public function a_presenter_leaves_visible_model_attributes_from_output()
+    {
+        $presenter = factory(User::class)
+            ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
+            ->present(VisibleAttributesPresenter::class);
+
+        $result = $presenter->toArray();
+
+        $this->assertTrue(isset($result['id']));
+        $this->assertTrue(isset($result['email']));
+        $this->assertFalse(isset($result['name']));
+
+        $this->assertEquals($result['email'], 'david@laravel.com');
     }
 
     /** @test */
