@@ -7,10 +7,10 @@ use Hemp\Presenter\Presenter;
 use Hemp\Presenter\Tests\Fixtures\CamelCaseAttributesPresenter;
 use Hemp\Presenter\Tests\Fixtures\HiddenAndVisibleAttributesPresenter;
 use Hemp\Presenter\Tests\Fixtures\HiddenAttributesPresenter;
-use Hemp\Presenter\Tests\Fixtures\VisibleAttributesPresenter;
 use Hemp\Presenter\Tests\Fixtures\User;
 use Hemp\Presenter\Tests\Fixtures\UserProfilePresenter;
 use Hemp\Presenter\Tests\Fixtures\UserWithDefaultPresenter;
+use Hemp\Presenter\Tests\Fixtures\VisibleAttributesPresenter;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -371,7 +371,7 @@ class PresenterTest extends IntegrationTest
             'email' => 'david@laravel.com',
         ], $presenter->toArray());
     }
- 
+
     /** @test */
     public function a_presenter_removes_hidden_attributes_and_leaves_visible_model_attributes_from_output()
     {
