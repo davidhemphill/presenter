@@ -43,7 +43,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Create a new Presenter instance.
      *
-     * @param \Illuminate\Database\Eloquent\Model|mixed $model
+     * @param  \Illuminate\Database\Eloquent\Model|mixed  $model
      */
     public function __construct($model)
     {
@@ -77,9 +77,9 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Create a new Presenter instance.
      *
-     * @param Model $model
-     * @param \Hemp\Presenter\Presenter|null $presenter
-     * @return void
+     * @param  Model  $model
+     * @param  \Hemp\Presenter\Presenter|null  $presenter
+     * @return \Hemp\Presenter\Presenter
      */
     public static function make(Model $model, $presenter = null)
     {
@@ -89,7 +89,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Return a collection of presented models.
      *
-     * @param array|\Illuminate\Support\Collection $models
+     * @param  array|\Illuminate\Support\Collection  $models
      * @return \Illuminate\Support\Collection
      */
     public static function collection($models, $presenter = null)
@@ -110,9 +110,8 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Call the Model's version of the method if available.
      *
-     * @param string $method
-     * @param array  $args
-     *
+     * @param  string  $method
+     * @param  array  $args
      * @return mixed
      */
     public function __call($method, $args)
@@ -123,7 +122,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Return the value of a magic accessor.
      *
-     * @param string $name
+     * @param  string  $name
      * @return mixed
      */
     public function __get($attribute)
@@ -178,7 +177,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Remove the non-visible attributes from the output.
      *
-     * @param array $array
+     * @param  array  $array
      * @return array
      */
     protected function removeHiddenAttributes($attributes)
@@ -245,7 +244,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Mutate the given Presenter attribute.
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @return string
      */
     protected function mutateAttribute($attribute)
@@ -256,7 +255,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Get the studly attribute method name.
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @return string
      */
     protected function getStudlyAttributeMethod($attribute)
@@ -269,7 +268,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Process the given attribute's keys.
      *
-     * @param array $attributes
+     * @param  array  $attributes
      * @return array
      */
     protected function processKeys($attributes)
@@ -284,7 +283,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Determine if the given offset exists on the Presenter.
      *
-     * @param string $offset
+     * @param  string  $offset
      * @return bool
      */
     public function offsetExists($offset)
@@ -295,7 +294,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Retrieve the value at the given offset.
      *
-     * @param string $offset
+     * @param  string  $offset
      * @return mixed
      */
     public function offsetGet($offset)
@@ -306,8 +305,9 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Set the value at the given offset.
      *
-     * @param string $offset
-     * @param string $value
+     * @param  string  $offset
+     * @param  string  $value
+     *
      * @throws BadMethodCallException
      */
     public function offsetSet($offset, $value)
@@ -318,7 +318,8 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     /**
      * Unset the value at the given offset.
      *
-     * @param string $offset
+     * @param  string  $offset
+     *
      * @throws BadMethodCallException
      */
     public function offsetUnset($offset)
