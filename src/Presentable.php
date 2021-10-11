@@ -10,7 +10,7 @@ trait Presentable
      * Present this instance using the provided Presenter class, defaulting
      * to the Presenter defined on the Model instance.
      *
-     * @param string|null $presenter
+     * @param  string|null  $presenter
      * @return \Hemp\Presenter
      */
     public function present($presenter = null)

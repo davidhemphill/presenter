@@ -20,7 +20,8 @@ class PresenterTest extends IntegrationTest
     public function can_get_the_original_model()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter {
+        $presenter = new class($user) extends Presenter
+        {
         };
         $this->assertSame($user, $presenter->getModel());
     }
@@ -29,7 +30,8 @@ class PresenterTest extends IntegrationTest
     public function its_own_methods_take_priority()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter {
+        $presenter = new class($user) extends Presenter
+        {
             public function middleName()
             {
                 return 'Isles';
@@ -43,7 +45,8 @@ class PresenterTest extends IntegrationTest
     public function delegates_undefined_method_calls_to_the_underlying_model_instance()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter {
+        $presenter = new class($user) extends Presenter
+        {
         };
         $this->assertEquals('Hello from the Model!', $presenter->sayHello());
     }
@@ -52,7 +55,8 @@ class PresenterTest extends IntegrationTest
     public function delegates_magic_properties_to_the_presenter()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter {
+        $presenter = new class($user) extends Presenter
+        {
             public function getSayHelloAttribute()
             {
                 return 'Hello from the Presenter!';
@@ -74,7 +78,8 @@ class PresenterTest extends IntegrationTest
             'updated_at' => Carbon::now(),
         ]);
 
-        $presenter = new class($user) extends Presenter {
+        $presenter = new class($user) extends Presenter
+        {
             public function getCreatedAtAttribute($model)
             {
                 return $model->created_at->format('M j, Y');
@@ -107,7 +112,8 @@ class PresenterTest extends IntegrationTest
             'updated_at' => Carbon::now(),
         ]);
 
-        $presenter = new class($user) extends Presenter {
+        $presenter = new class($user) extends Presenter
+        {
             public function getCreatedAtAttribute($model)
             {
                 return $model->created_at->format('M j, Y');
@@ -140,7 +146,8 @@ class PresenterTest extends IntegrationTest
             'updated_at' => Carbon::now(),
         ]);
 
-        $presenter = new class($user) extends Presenter {
+        $presenter = new class($user) extends Presenter
+        {
             public function getCreatedAtAttribute($model)
             {
                 return $model->created_at->format('M j, Y');
@@ -202,7 +209,8 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_present_an_object_that_is_not_a_model()
     {
-        $notAModel = new class {
+        $notAModel = new class
+        {
             public $name = 'david';
 
             public function fullName()
@@ -211,7 +219,8 @@ class PresenterTest extends IntegrationTest
             }
         };
 
-        $presenter = new class($notAModel) extends Presenter {
+        $presenter = new class($notAModel) extends Presenter
+        {
         };
 
         $this->assertEquals('david', $presenter->name);
