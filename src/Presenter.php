@@ -140,6 +140,25 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
     }
 
     /**
+     * Dynamically check a property exists on the underlying object.
+     *
+     * @param  mixed  $attribute
+     * @return bool
+     */
+    public function __isset($attribute)
+    {
+        $method = $this->getStudlyAttributeMethod($attribute);
+
+        if (method_exists($this, $method)) {
+            $value = $this->{$method}($this->model);
+
+            return ! is_null($value);
+        }
+
+        return isset($this->model->{$attribute});
+    }
+
+    /**
      * Convert the Presenter to a string.
      *
      * @return string
