@@ -152,7 +152,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
         if (method_exists($this, $method)) {
             $value = $this->{$method}($this->model);
 
-            return isset($value);
+            return ! is_null($value);
         }
 
         return isset($this->model->{$attribute});
