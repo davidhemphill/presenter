@@ -449,4 +449,44 @@ class PresenterTest extends IntegrationTest
 
         unset($presenter['email']);
     }
+
+    /** @test */
+    public function can_check_isset_on_presenter_for_model_attribute()
+    {
+        $presenter = factory(User::class)
+            ->create(['name' => 'David Hemphill'])
+            ->present(UserProfilePresenter::class);
+
+        $this->assertTrue(isset($presenter->name));
+    }
+
+    /** @test */
+    public function can_check_isset_on_presenter_for_accessor()
+    {
+        $user = factory(User::class)->create();
+        $presenter = new class($user) extends Presenter
+        {
+            public function getSayHelloAttribute()
+            {
+                return 'Hello from the Presenter!';
+            }
+        };
+
+        $this->assertTrue(isset($presenter->say_hello));
+    }
+
+    /** @test */
+    public function can_check_isset_is_false_on_presenter_for_accessor_if_returns_null()
+    {
+        $user = factory(User::class)->create();
+        $presenter = new class($user) extends Presenter
+        {
+            public function getSayHelloAttribute()
+            {
+                return null;
+            }
+        };
+
+        $this->assertFalse(isset($presenter->say_hello));
+    }
 }
