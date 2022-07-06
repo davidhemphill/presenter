@@ -1,0 +1,17 @@
+version: 1
+
+environment:
+  php: 7.4
+  node: 12
+
+
+
+pipeline:
+  - name: Setup
+    cmd: |
+      composer install --no-interaction --prefer-dist --optimize-autoloader
+
+  - name: PHPUnit
+    cmd: |
+      phpunit
+
