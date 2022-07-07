@@ -4,7 +4,7 @@
 
 This package makes it fast, fun, and profitable to decorate your Eloquent models for presentation in views, PDFs, CSV files, or anywhere else in your project.
 
-For a little primer on the problems presenters solve, take a look at this article: [Presenters in Laravel](https://davidhemphill.com/presenters-in-laravel/).
+For a little primer on the problems presenters solve, take a look at this article: [Presenters in Laravel](https://gistlog.co/davidhemphill/1b7c749cdd6520eb19320c208ef32433).
 
 ## Installation
 
