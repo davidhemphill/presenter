@@ -305,7 +305,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      * @param  string  $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->{$offset} !== null;
     }
@@ -316,7 +316,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      * @param  string  $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->{$offset};
     }
@@ -329,7 +329,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      *
      * @throws BadMethodCallException
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new BadMethodCallException('Hemp/Presenter does not support write methods');
     }
@@ -341,7 +341,7 @@ abstract class Presenter implements ArrayAccess, Arrayable, Jsonable
      *
      * @throws BadMethodCallException
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new BadMethodCallException('Hemp/Presenter does not support write methods');
     }
