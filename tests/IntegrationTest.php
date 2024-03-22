@@ -27,13 +27,12 @@ abstract class IntegrationTest extends TestCase
             $table->timestamps();
             $table->softDeletes();
         });
-
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            \Hemp\Presenter\PresenterServiceProvider::class
+            \Hemp\Presenter\PresenterServiceProvider::class,
         ];
     }
 
