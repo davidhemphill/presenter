@@ -19,7 +19,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_get_the_original_model()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $presenter = new class($user) extends Presenter {
         };
         $this->assertSame($user, $presenter->getModel());
@@ -28,9 +28,8 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function its_own_methods_take_priority()
     {
-        $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter
-        {
+        $user = User::factory()->create();
+        $presenter = new class($user) extends Presenter {
             public function middleName()
             {
                 return 'Isles';
@@ -43,7 +42,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function delegates_undefined_method_calls_to_the_underlying_model_instance()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $presenter = new class($user) extends Presenter {
         };
         $this->assertEquals('Hello from the Model!', $presenter->sayHello());
@@ -52,9 +51,8 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function delegates_magic_properties_to_the_presenter()
     {
-        $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter
-        {
+        $user = User::factory()->create();
+        $presenter = new class($user) extends Presenter {
             public function getSayHelloAttribute()
             {
                 return 'Hello from the Presenter!';
@@ -69,15 +67,14 @@ class PresenterTest extends IntegrationTest
     {
         Carbon::setTestNow(Carbon::parse('Oct 14 2019'));
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'name' => 'David Hemphill',
             'email' => 'david@laravel.com',
             'created_at' => Carbon::now()->subDays(4),
             'updated_at' => Carbon::now(),
         ]);
 
-        $presenter = new class($user) extends Presenter
-        {
+        $presenter = new class($user) extends Presenter {
             public function getCreatedAtAttribute($model)
             {
                 return $model->created_at->format('M j, Y');
@@ -103,15 +100,14 @@ class PresenterTest extends IntegrationTest
     {
         Carbon::setTestNow(Carbon::parse('Oct 14 2019'));
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'name' => 'David Hemphill',
             'email' => 'david@laravel.com',
             'created_at' => Carbon::now()->subDays(4),
             'updated_at' => Carbon::now(),
         ]);
 
-        $presenter = new class($user) extends Presenter
-        {
+        $presenter = new class($user) extends Presenter {
             public function getCreatedAtAttribute($model)
             {
                 return $model->created_at->format('M j, Y');
@@ -137,15 +133,14 @@ class PresenterTest extends IntegrationTest
     {
         Carbon::setTestNow(Carbon::parse('Oct 14 2019'));
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'name' => 'David Hemphill',
             'email' => 'david@laravel.com',
             'created_at' => Carbon::now()->subDays(4),
             'updated_at' => Carbon::now(),
         ]);
 
-        $presenter = new class($user) extends Presenter
-        {
+        $presenter = new class($user) extends Presenter {
             public function getCreatedAtAttribute($model)
             {
                 return $model->created_at->format('M j, Y');
@@ -169,14 +164,14 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_call_present_on_an_eloquent_model_using_the_trait()
     {
-        $user = factory(User::class)->create()->present(UserProfilePresenter::class);
+        $user = User::factory()->create()->present(UserProfilePresenter::class);
         $this->assertInstanceOf(UserProfilePresenter::class, $user);
     }
 
     /** @test */
     public function can_call_present_on_an_eloquent_model_using_the_trait_and_use_default_presenter()
     {
-        $user = factory(UserWithDefaultPresenter::class)->create()->present();
+        $user = UserWithDefaultPresenter::factory()->create()->present();
         $this->assertInstanceOf(UserProfilePresenter::class, $user);
     }
 
@@ -184,20 +179,20 @@ class PresenterTest extends IntegrationTest
     public function throws_if_theres_no_default_presenter_and_none_is_passed_in()
     {
         $this->expectException(BadMethodCallException::class);
-        factory(User::class)->create()->present(null);
+        User::factory()->create()->present(null);
     }
 
     /** @test */
     public function can_use_a_helper_function_to_decorate_a_model()
     {
-        $user = present(factory(User::class)->create(), UserProfilePresenter::class);
+        $user = present(User::factory()->create(), UserProfilePresenter::class);
         $this->assertInstanceOf(UserProfilePresenter::class, $user);
     }
 
     /** @test */
     public function can_present_a_model_using_a_closure()
     {
-        $presenter = factory(User::class)->create(['name' => 'David'])->present(function ($user) {
+        $presenter = User::factory()->create(['name' => 'David'])->present(function ($user) {
             return ['name' => strtolower($user->name)];
         });
 
@@ -207,8 +202,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_present_an_object_that_is_not_a_model()
     {
-        $notAModel = new class
-        {
+        $notAModel = new class {
             public $name = 'david';
 
             public function fullName()
@@ -227,7 +221,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_present_a_collection_of_eloquent_models()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $users = collect([$user])->present(UserProfilePresenter::class);
 
         $users->each(function ($user) {
@@ -238,7 +232,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_present_a_collection_of_models_using_a_closure()
     {
-        $user = factory(User::class)->create(['name' => 'David Hemphill']);
+        $user = User::factory()->create(['name' => 'David Hemphill']);
         $users = collect([$user])->present(function ($user) {
             return ['name' => strtolower($user->name)];
         });
@@ -251,7 +245,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_create_presenters_using_the_make_method()
     {
-        $user = factory(User::class)->create(['name' => 'David Hemphill']);
+        $user = User::factory()->create(['name' => 'David Hemphill']);
         $presenter = Presenter::make($user, UserProfilePresenter::class);
 
         $this->assertInstanceOf(UserProfilePresenter::class, $presenter);
@@ -260,7 +254,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_call_make_on_the_presenter_itself()
     {
-        $user = factory(User::class)->create(['name' => 'David Hemphill']);
+        $user = User::factory()->create(['name' => 'David Hemphill']);
         $presenter = UserProfilePresenter::make($user);
 
         $this->assertInstanceOf(UserProfilePresenter::class, $presenter);
@@ -269,8 +263,8 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_present_a_collection_of_models_using_collection_method()
     {
-        $user1 = factory(User::class)->create(['name' => 'David Hemphill']);
-        $user2 = factory(User::class)->create(['name' => 'David Hemphill']);
+        $user1 = User::factory()->create(['name' => 'David Hemphill']);
+        $user2 = User::factory()->create(['name' => 'David Hemphill']);
 
         $collection = Presenter::collection([$user1, $user2], UserProfilePresenter::class);
 
@@ -280,8 +274,8 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_present_a_collection_of_models_using_collection_method_on_the_presenter_itself()
     {
-        $user1 = factory(User::class)->create(['name' => 'David Hemphill']);
-        $user2 = factory(User::class)->create(['name' => 'David Hemphill']);
+        $user1 = User::factory()->create(['name' => 'David Hemphill']);
+        $user2 = User::factory()->create(['name' => 'David Hemphill']);
 
         $collection = UserProfilePresenter::collection([$user1, $user2]);
 
@@ -293,7 +287,7 @@ class PresenterTest extends IntegrationTest
     {
         Carbon::setTestNow(Carbon::parse('Oct 14 2019'));
 
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(CamelCaseAttributesPresenter::class);
 
@@ -303,15 +297,15 @@ class PresenterTest extends IntegrationTest
             'name' => 'David Hemphill',
             'email' => 'david@laravel.com',
             'id' => 1,
-            'updatedAt' => '2019-10-14 00:00:00',
-            'createdAt' => '2019-10-14 00:00:00',
+            'updatedAt' => '2019-10-14T00:00:00.000000Z',
+            'createdAt' => '2019-10-14T00:00:00.000000Z',
         ], $presenter->toArray());
     }
 
     /** @test */
     public function can_set_the_casing_strategy_at_runtime()
     {
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(UserProfilePresenter::class);
 
@@ -339,7 +333,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function a_collection_of_presented_eloquent_models_will_still_return_json()
     {
-        factory(User::class)->create(['name' => 'David Hemphill']);
+        User::factory()->create(['name' => 'David Hemphill']);
 
         $response = $this
             ->withoutExceptionHandling()
@@ -353,8 +347,8 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_paginate_a_presented_collection()
     {
-        factory(User::class)->create(['name' => 'David Hemphill']);
-        factory(User::class)->create(['name' => 'Taylor Otwell']);
+        User::factory()->create(['name' => 'David Hemphill']);
+        User::factory()->create(['name' => 'Taylor Otwell']);
 
         $response = $this
             ->withoutExceptionHandling()
@@ -368,7 +362,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function presenter_removes_hidden_model_attributes_from_output()
     {
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(HiddenAttributesPresenter::class);
 
@@ -381,7 +375,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function presenter_removes_hidden_attributes_and_leaves_visible_model_attributes_in_output()
     {
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(HiddenAndVisibleAttributesPresenter::class);
 
@@ -393,7 +387,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function supports_offset_exists_via_array_access()
     {
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(HiddenAndVisibleAttributesPresenter::class);
 
@@ -403,7 +397,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function presenter_leaves_visible_model_attributes_in_output()
     {
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(VisibleAttributesPresenter::class);
 
@@ -416,7 +410,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_be_array_accessed()
     {
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(UserProfilePresenter::class);
 
@@ -428,7 +422,7 @@ class PresenterTest extends IntegrationTest
     {
         $this->expectException(BadMethodCallException::class);
 
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(HiddenAndVisibleAttributesPresenter::class);
 
@@ -440,7 +434,7 @@ class PresenterTest extends IntegrationTest
     {
         $this->expectException(BadMethodCallException::class);
 
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill', 'email' => 'david@laravel.com'])
             ->present(HiddenAndVisibleAttributesPresenter::class);
 
@@ -450,7 +444,7 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_check_isset_on_presenter_for_model_attribute()
     {
-        $presenter = factory(User::class)
+        $presenter = User::factory()
             ->create(['name' => 'David Hemphill'])
             ->present(UserProfilePresenter::class);
 
@@ -460,9 +454,8 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_check_isset_on_presenter_for_accessor()
     {
-        $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter
-        {
+        $user = User::factory()->create();
+        $presenter = new class($user) extends Presenter {
             public function getSayHelloAttribute()
             {
                 return 'Hello from the Presenter!';
@@ -475,9 +468,8 @@ class PresenterTest extends IntegrationTest
     /** @test */
     public function can_check_isset_is_false_on_presenter_for_accessor_if_returns_null()
     {
-        $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter
-        {
+        $user = User::factory()->create();
+        $presenter = new class($user) extends Presenter {
             public function getSayHelloAttribute()
             {
                 return null;

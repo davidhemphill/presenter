@@ -2,43 +2,52 @@
 
 namespace Hemp\Presenter\Tests;
 
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase;
 
 abstract class IntegrationTest extends TestCase
 {
-    /**
-     * Setup the test case.
-     *
-     * @return void
-     */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        Hash::driver('bcrypt')->setRounds(4);
-
-        $this->withFactories(__DIR__.'/Factories');
-
-        $this->loadMigrations();
-        $this->registerRoutes();
+        $this->setUpDatabase();
     }
 
-    protected function loadMigrations()
+    protected function setUpDatabase()
     {
-        $this->loadMigrationsFrom([
-            '--database' => 'sqlite',
-            '--realpath' => realpath(__DIR__.'/Migrations'),
+        Schema::create('users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+    }
+
+    protected function getPackageProviders($app)
+    {
+        return [
+            \Hemp\Presenter\PresenterServiceProvider::class
+        ];
+    }
+
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('database.default', 'testbench');
+        $app['config']->set('database.connections.testbench', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
         ]);
     }
 
-    /**
-     * Register the package's routes for testing resources.
-     *
-     * @return void
-     */
-    protected function registerRoutes()
+    protected function defineWebRoutes($router)
     {
         Route::get('/users', function () {
             return \Hemp\Presenter\Tests\Fixtures\User::all()->present(function ($user) {
@@ -51,33 +60,5 @@ abstract class IntegrationTest extends TestCase
                 return ['full_name' => $user->name];
             });
         });
-    }
-
-    /**
-     * Define environment setup.
-     *
-     * @param  \Illuminate\Foundation\Application  $app
-     * @return void
-     */
-    protected function getEnvironmentSetUp($app)
-    {
-        $app['config']->set('database.default', 'sqlite');
-        $app['config']->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-    }
-
-    protected function getPackageAliases($app)
-    {
-        return [
-            // 'Presenter' => 'Hemp\Presenter\Facades\Presenter'
-        ];
-    }
-
-    protected function getPackageProviders($app)
-    {
-        return [\Hemp\Presenter\PresenterServiceProvider::class];
     }
 }
