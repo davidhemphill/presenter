@@ -20,8 +20,7 @@ class PresenterTest extends IntegrationTest
     public function can_get_the_original_model()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter
-        {
+        $presenter = new class($user) extends Presenter {
         };
         $this->assertSame($user, $presenter->getModel());
     }
@@ -45,8 +44,7 @@ class PresenterTest extends IntegrationTest
     public function delegates_undefined_method_calls_to_the_underlying_model_instance()
     {
         $user = factory(User::class)->create();
-        $presenter = new class($user) extends Presenter
-        {
+        $presenter = new class($user) extends Presenter {
         };
         $this->assertEquals('Hello from the Model!', $presenter->sayHello());
     }
@@ -219,8 +217,7 @@ class PresenterTest extends IntegrationTest
             }
         };
 
-        $presenter = new class($notAModel) extends Presenter
-        {
+        $presenter = new class($notAModel) extends Presenter {
         };
 
         $this->assertEquals('david', $presenter->name);
